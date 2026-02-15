@@ -1,0 +1,18 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .btn-primary {
+    @apply rounded-lg bg-venue-primary px-4 py-2.5 text-sm font-medium text-white hover:opacity-90;
+  }
+  .btn-secondary {
+    @apply rounded-lg border border-venue-primary/30 bg-white px-4 py-2.5 text-sm font-medium text-venue-primary hover:bg-venue-primary/5;
+  }
+  .btn-accent {
+    @apply rounded-lg bg-venue-accent px-4 py-2.5 text-sm font-medium text-venue-primary hover:opacity-90;
+  }
+  .input-field {
+    @apply w-full rounded-lg border border-venue-border bg-white px-3 py-2.5 text-venue-primary;
+  }
+}

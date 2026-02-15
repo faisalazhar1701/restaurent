@@ -1,0 +1,89 @@
+// Restaurant QR ordering — production schema (PostgreSQL only)
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  guest
+  admin
+}
+
+enum TableStatus {
+  available
+  occupied
+}
+
+model User {
+  id        String   @id @default(cuid())
+  role      UserRole
+  createdAt DateTime @default(now())
+  sessions  Session[]
+}
+
+enum OrderStatus {
+  draft
+  placed
+  cancelled
+}
+
+model Session {
+  id          String    @id @default(cuid())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tableNumber Int?
+  guestCount  Int?
+  expiresAt   DateTime
+  createdAt   DateTime  @default(now())
+  orders      Order[]
+}
+
+model Order {
+  id         String      @id @default(cuid())
+  sessionId  String
+  session    Session     @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  tableNumber Int?
+  status     OrderStatus @default(draft)
+  createdAt  DateTime    @default(now())
+  items      OrderItem[]
+}
+
+model OrderItem {
+  id           String   @id @default(cuid())
+  orderId      String
+  order        Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  menuItemId   String
+  menuItem     MenuItem @relation(fields: [menuItemId], references: [id], onDelete: Cascade)
+  quantity     Int
+  priceAtOrder Decimal  @db.Decimal(10, 2)
+}
+
+model RestaurantTable {
+  id          String      @id @default(cuid())
+  tableNumber Int
+  zone        String?
+  capacity    Int         @default(4)
+  status      TableStatus @default(available)
+}
+
+model MenuCategory {
+  id    String     @id @default(cuid())
+  name  String
+  items MenuItem[]
+}
+
+model MenuItem {
+  id          String       @id @default(cuid())
+  name        String
+  price       Decimal      @db.Decimal(10, 2)
+  description String?
+  isActive    Boolean      @default(true)
+  categoryId  String
+  category    MenuCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  orderItems  OrderItem[]
+}
