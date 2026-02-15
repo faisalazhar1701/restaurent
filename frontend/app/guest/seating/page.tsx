@@ -136,14 +136,14 @@ export default function SeatingPage() {
   return (
     <>
       <PageContainer title="Your table" subtitle={VENUE_NAME}>
-        <Card className="p-8 text-center">
-          <p className="text-2xl font-bold text-venue-primary">
+        <Card className="p-10 text-center">
+          <p className="text-4xl font-bold tracking-tight text-venue-primary sm:text-5xl">
             Table {table?.zone ? `${table.zone}-` : ''}{table?.tableNumber}
           </p>
-          <p className="mt-2 text-venue-muted">Your table has been assigned.</p>
+          <p className="mt-3 text-venue-muted">Your table has been assigned.</p>
         </Card>
         {canPlace && (
-          <div className="mt-6">
+          <div className="mt-8">
             <button
               type="button"
               disabled={placing}
@@ -152,11 +152,15 @@ export default function SeatingPage() {
             >
               {placing ? 'Placing order…' : 'Place order'}
             </button>
-            {placeError && <p className="mt-2 text-sm text-red-600">{placeError}</p>}
+            {placeError && (
+              <p className="mt-3 text-sm text-red-600">{placeError}</p>
+            )}
           </div>
         )}
         {placed && (
-          <p className="mt-6 text-center font-medium text-venue-primary">Order placed!</p>
+          <p className="mt-8 text-center text-lg font-semibold text-venue-primary">
+            Order placed
+          </p>
         )}
       </PageContainer>
       <BottomBar

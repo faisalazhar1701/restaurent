@@ -28,29 +28,31 @@ export default function RewardsPage() {
 
   return (
     <>
-      <PageContainer title="Rewards" subtitle="">
+      <PageContainer title="Rewards" subtitle="Offers from other restaurants">
         <Card className="p-6">
           <p className="text-sm text-venue-muted">Your tier</p>
-          <p className="text-xl font-semibold text-venue-primary">{REWARDS_TIER.name}</p>
-          <p className="mt-1 text-sm text-venue-muted">{REWARDS_TIER.points} points</p>
+          <p className="mt-1 text-xl font-semibold text-venue-primary">{REWARDS_TIER.name}</p>
+          <p className="mt-0.5 text-sm text-venue-muted">{REWARDS_TIER.points} points</p>
         </Card>
-        <div className="mt-6 space-y-3">
-          <p className="font-medium text-venue-primary">Rewards</p>
-          {REWARDS_LIST.map((r) => (
-            <Card key={r.id} className="p-4">
-              <p className="font-medium">{r.name}</p>
-              <p className="text-sm text-venue-muted">
-                {r.unlocked ? 'Unlocked' : `${r.pointsRequired} points needed`}
-              </p>
-            </Card>
-          ))}
+        <div className="mt-8">
+          <p className="mb-4 font-medium text-venue-primary">Available offers</p>
+          <div className="space-y-3">
+            {REWARDS_LIST.map((r) => (
+              <Card key={r.id} className="p-5">
+                <p className="font-medium text-venue-primary">{r.name}</p>
+                <p className="mt-1 text-sm text-venue-muted">
+                  {r.unlocked ? 'Unlocked' : `${r.pointsRequired} points needed`}
+                </p>
+              </Card>
+            ))}
+          </div>
         </div>
       </PageContainer>
-      <div className="mt-auto flex gap-3 border-t border-venue-border bg-white p-4">
+      <div className="sticky bottom-0 mt-auto flex gap-3 border-t border-venue-border bg-white p-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
         <button
           type="button"
           onClick={handleDone}
-          className="btn-primary flex-1 py-3"
+          className="btn-primary flex-1 py-3.5"
         >
           Done
         </button>

@@ -2,7 +2,9 @@
 
 import { useState, useEffect } from 'react'
 import { Card } from '@/components/ui/Card'
+import { Badge } from '@/components/ui/Badge'
 import { Skeleton } from '@/components/ui/Skeleton'
+import { EmptyState } from '@/components/ui/EmptyState'
 import { getAdminOrders, type OrderResponse, ApiError } from '@/lib/api'
 
 export default function AdminOrdersPage() {
@@ -30,9 +32,13 @@ export default function AdminOrdersPage() {
 
   if (loading) {
     return (
-      <div className="max-w-5xl">
-        <h1 className="mb-1 text-2xl font-semibold text-venue-primary sm:text-3xl">Orders</h1>
-        <p className="mb-8 text-sm text-venue-muted">Loading…</p>
+      <div className="mx-auto max-w-5xl">
+        <header className="mb-10">
+          <h1 className="text-2xl font-semibold tracking-tight text-venue-primary sm:text-3xl">
+            Orders
+          </h1>
+          <p className="mt-1 text-sm text-venue-muted">Loading…</p>
+        </header>
         <Skeleton lines={6} />
       </div>
     )
@@ -40,9 +46,13 @@ export default function AdminOrdersPage() {
 
   if (error) {
     return (
-      <div className="max-w-5xl">
-        <h1 className="mb-1 text-2xl font-semibold text-venue-primary sm:text-3xl">Orders</h1>
-        <p className="mt-4 text-red-600">{error}</p>
+      <div className="mx-auto max-w-5xl">
+        <header className="mb-10">
+          <h1 className="text-2xl font-semibold tracking-tight text-venue-primary sm:text-3xl">
+            Orders
+          </h1>
+        </header>
+        <p className="text-red-600">{error}</p>
       </div>
     )
   }
@@ -50,37 +60,42 @@ export default function AdminOrdersPage() {
   const safeOrders = Array.isArray(orders) ? orders : []
 
   return (
-    <div className="max-w-5xl">
-      <h1 className="mb-1 text-2xl font-semibold text-venue-primary sm:text-3xl">Orders</h1>
-      <p className="mb-8 text-sm text-venue-muted">Placed orders from guests</p>
+    <div className="mx-auto max-w-5xl">
+      <header className="mb-10">
+        <h1 className="text-2xl font-semibold tracking-tight text-venue-primary sm:text-3xl">
+          Orders
+        </h1>
+        <p className="mt-1 text-sm text-venue-muted">Placed orders from guests</p>
+      </header>
 
       {safeOrders.length === 0 ? (
-        <Card className="p-12 text-center">
-          <p className="font-medium text-venue-primary">No orders yet</p>
-          <p className="mt-1 text-sm text-venue-muted">Orders will appear here once guests place them.</p>
-        </Card>
+        <EmptyState
+          title="No orders yet"
+          description="Orders will appear here once guests place them."
+        />
       ) : (
-        <div className="space-y-5">
+        <div className="space-y-4">
           {safeOrders.map((order) => {
             const items = Array.isArray(order.items) ? order.items : []
             const total = items.reduce((s, i) => s + (i.priceAtOrder ?? 0) * (i.quantity ?? 0), 0)
+            const itemCount = items.reduce((s, i) => s + (i.quantity ?? 0), 0)
             const createdAt = order.createdAt
               ? new Date(order.createdAt).toLocaleString()
               : '—'
             return (
-              <Card key={order.id} className="p-5">
-                <div className="flex flex-wrap items-start justify-between gap-2">
+              <Card key={order.id} className="p-6 transition-shadow hover:shadow-card-hover">
+                <div className="flex flex-wrap items-start justify-between gap-3">
                   <div>
                     <p className="font-semibold text-venue-primary">
                       Table {order.tableNumber ?? '—'}
                     </p>
                     <p className="mt-0.5 text-sm text-venue-muted">{createdAt}</p>
                   </div>
-                  <span className="rounded bg-venue-primary/10 px-2.5 py-1 text-sm font-medium text-venue-primary">
-                    Placed · {items.reduce((s, i) => s + (i.quantity ?? 0), 0)} items
-                  </span>
+                  <Badge variant="default">
+                    {itemCount} {itemCount === 1 ? 'item' : 'items'}
+                  </Badge>
                 </div>
-                <ul className="mt-3 space-y-1 text-sm text-venue-muted">
+                <ul className="mt-4 space-y-1.5 border-t border-venue-border pt-4 text-sm text-venue-muted">
                   {items.map((i) => (
                     <li key={i.id}>
                       {i.menuItemName} × {i.quantity} — $
@@ -88,7 +103,7 @@ export default function AdminOrdersPage() {
                     </li>
                   ))}
                 </ul>
-                <p className="mt-2 font-semibold text-venue-primary">
+                <p className="mt-4 font-semibold text-venue-primary">
                   Total: ${total.toFixed(2)}
                 </p>
               </Card>

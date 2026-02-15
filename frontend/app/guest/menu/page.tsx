@@ -120,33 +120,33 @@ export default function MenuPage() {
       <PageContainer title="Menu" subtitle={VENUE_NAME}>
         <Link
           href="/guest/cart"
-          className="mb-6 flex items-center justify-between rounded-lg border border-venue-primary/20 bg-white px-4 py-3 text-sm font-medium text-venue-primary shadow-sm"
+          className="mb-8 flex items-center justify-between rounded-xl border border-venue-border bg-white px-5 py-4 shadow-card transition-shadow hover:shadow-card-hover"
         >
-          <span>Cart</span>
-          <span className="font-semibold">{cartCount} {cartCount === 1 ? 'item' : 'items'}</span>
+          <span className="font-medium text-venue-primary">Cart</span>
+          <span className="font-semibold text-venue-primary">{cartCount} {cartCount === 1 ? 'item' : 'items'}</span>
         </Link>
-        <div className="-mx-1 mb-6 flex gap-2 overflow-x-auto pb-2">
+        <div className="-mx-1 mb-8 flex gap-2 overflow-x-auto pb-2">
           {safeCategories.map((cat) => (
             <button
               key={cat.id}
               type="button"
               onClick={() => setActiveCategory(cat.id)}
-              className={`min-h-[44px] shrink-0 rounded-lg px-4 py-2.5 text-sm font-medium ${
+              className={`min-h-[44px] shrink-0 rounded-xl px-4 py-2.5 text-sm font-medium transition-colors ${
                 activeCategory === cat.id
                   ? 'bg-venue-primary text-white'
-                  : 'border border-gray-200 bg-white text-venue-muted hover:border-venue-primary/30'
+                  : 'border border-venue-border bg-white text-venue-muted hover:border-venue-primary/40'
               }`}
             >
               {cat.name}
             </button>
           ))}
         </div>
-        <div className="space-y-5">
+        <div className="space-y-4">
           {filteredItems.length === 0 ? (
             <EmptyState title="No items in this category" description="Select another category." />
           ) : (
             filteredItems.map((item) => (
-              <Card key={item.id} className="flex flex-row items-start gap-4 p-5">
+              <Card key={item.id} className="flex flex-row items-start gap-5 p-5">
                 <div className="min-w-0 flex-1">
                   <h3 className="font-semibold text-venue-primary">{item.name}</h3>
                   {item.description && (
@@ -160,7 +160,7 @@ export default function MenuPage() {
                   type="button"
                   disabled={!!addingId || order?.status !== 'draft'}
                   onClick={() => handleAddToCart(item)}
-                  className="btn-primary min-h-[44px] shrink-0 py-2.5 px-5 text-sm disabled:opacity-50"
+                  className="btn-primary min-h-[44px] shrink-0 px-5 py-2.5 disabled:opacity-50"
                 >
                   {addingId === item.id ? 'Adding…' : 'Add'}
                 </button>

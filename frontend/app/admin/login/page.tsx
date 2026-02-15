@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { Card } from '@/components/ui/Card'
 import { adminLogin, getApiBaseUrlOrNull, ApiError } from '@/lib/api'
 import { setAdminToken } from '@/lib/adminAuth'
 
@@ -42,56 +43,64 @@ export default function AdminLoginPage() {
   }
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center bg-venue-surface px-4 py-12">
-      <div className="w-full max-w-sm">
-        <div className="mb-8 text-center">
-          <h1 className="text-2xl font-semibold tracking-tight text-venue-primary">Venue Seat</h1>
-          <p className="mt-1 text-sm text-venue-muted">Admin sign in</p>
+    <main className="flex min-h-screen flex-col items-center justify-center bg-venue-surface px-4 py-16">
+      <div className="w-full max-w-[400px]">
+        <div className="mb-10 text-center">
+          <h1 className="text-2xl font-semibold tracking-tight text-venue-primary">
+            Venue Seat
+          </h1>
+          <p className="mt-2 text-sm text-venue-muted">Admin sign in</p>
         </div>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {!apiConfigured && (
-            <p className="text-sm text-amber-600">Service is not configured. Please contact support.</p>
-          )}
-          <div>
-            <label htmlFor="email" className="mb-1.5 block text-sm font-medium text-venue-primary">
-              Email
-            </label>
-            <input
-              id="email"
-              type="email"
-              autoComplete="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              className="input-field"
-              placeholder="admin@example.com"
-            />
-          </div>
-          <div>
-            <label htmlFor="password" className="mb-1.5 block text-sm font-medium text-venue-primary">
-              Password
-            </label>
-            <input
-              id="password"
-              type="password"
-              autoComplete="current-password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              className="input-field"
-            />
-          </div>
-          {error && <p className="text-sm text-red-600">{error}</p>}
-          <button
-            type="submit"
-            disabled={loading || !apiConfigured}
-            className="btn-primary min-h-[48px] w-full disabled:opacity-50"
-          >
-            {loading ? 'Signing in…' : 'Sign in'}
-          </button>
-        </form>
-        <p className="mt-6 text-center text-sm text-venue-muted">
-          <Link href="/" className="hover:text-venue-primary hover:underline">
+        <Card className="p-8">
+          <form onSubmit={handleSubmit} className="space-y-5">
+            {!apiConfigured && (
+              <p className="rounded-lg bg-amber-50 p-3 text-sm text-amber-800">
+                Service is not configured. Please contact support.
+              </p>
+            )}
+            <div>
+              <label htmlFor="email" className="mb-1.5 block text-sm font-medium text-venue-primary">
+                Email
+              </label>
+              <input
+                id="email"
+                type="email"
+                autoComplete="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                className="input-field"
+                placeholder="admin@example.com"
+              />
+            </div>
+            <div>
+              <label htmlFor="password" className="mb-1.5 block text-sm font-medium text-venue-primary">
+                Password
+              </label>
+              <input
+                id="password"
+                type="password"
+                autoComplete="current-password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                className="input-field"
+              />
+            </div>
+            {error && (
+              <p className="text-sm text-red-600">{error}</p>
+            )}
+            <button
+              type="submit"
+              disabled={loading || !apiConfigured}
+              className="btn-primary w-full py-3.5 disabled:opacity-50"
+            >
+              {loading ? 'Signing in…' : 'Sign in'}
+            </button>
+          </form>
+        </Card>
+        <p className="mt-8 text-center text-sm text-venue-muted">
+          <Link href="/" className="font-medium text-venue-primary hover:underline">
             ← Back to home
           </Link>
         </p>

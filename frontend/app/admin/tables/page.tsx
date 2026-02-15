@@ -3,7 +3,9 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { Card } from '@/components/ui/Card'
+import { Badge } from '@/components/ui/Badge'
 import { Skeleton } from '@/components/ui/Skeleton'
+import { EmptyState } from '@/components/ui/EmptyState'
 import { getTables, createTable, type RestaurantTable, ApiError } from '@/lib/api'
 
 export default function AdminTablesPage() {
@@ -45,11 +47,13 @@ export default function AdminTablesPage() {
 
   if (loading) {
     return (
-      <div className="max-w-5xl">
-        <h1 className="mb-1 text-2xl font-semibold text-venue-primary sm:text-3xl">
-          Manage tables
-        </h1>
-        <p className="mb-8 text-sm text-venue-muted">Loading…</p>
+      <div className="mx-auto max-w-5xl">
+        <header className="mb-10">
+          <h1 className="text-2xl font-semibold tracking-tight text-venue-primary sm:text-3xl">
+            Tables
+          </h1>
+          <p className="mt-1 text-sm text-venue-muted">Loading…</p>
+        </header>
         <Skeleton lines={6} />
       </div>
     )
@@ -58,18 +62,22 @@ export default function AdminTablesPage() {
   const safeTables = Array.isArray(tables) ? tables : []
 
   return (
-    <div className="max-w-5xl">
-      <h1 className="mb-1 text-2xl font-semibold text-venue-primary sm:text-3xl">
-        Manage tables
-      </h1>
-      <p className="mb-8 text-sm text-venue-muted">
-        View all tables. Add tables below.
-      </p>
+    <div className="mx-auto max-w-5xl">
+      <header className="mb-10">
+        <h1 className="text-2xl font-semibold tracking-tight text-venue-primary sm:text-3xl">
+          Tables
+        </h1>
+        <p className="mt-1 text-sm text-venue-muted">
+          Manage zones and table capacity
+        </p>
+      </header>
 
-      {error && <p className="mb-4 text-sm text-red-600">{error}</p>}
+      {error && (
+        <p className="mb-6 text-sm text-red-600">{error}</p>
+      )}
 
-      <Card className="mb-6 p-4">
-        <h2 className="mb-3 text-lg font-semibold text-venue-primary">Add table</h2>
+      <Card className="mb-10 p-6">
+        <h2 className="text-lg font-semibold text-venue-primary">Add table</h2>
         <form
           onSubmit={async (e) => {
             e.preventDefault()
@@ -94,74 +102,91 @@ export default function AdminTablesPage() {
               setAdding(false)
             }
           }}
-          className="flex flex-wrap items-end gap-3"
+          className="mt-6 flex flex-wrap items-end gap-4"
         >
-          <div>
-            <label className="mb-1 block text-sm font-medium text-venue-muted">Table number</label>
+          <div className="min-w-[140px]">
+            <label className="mb-1.5 block text-sm font-medium text-venue-primary">
+              Table number
+            </label>
             <input
               type="number"
               min={1}
               value={addTableNumber}
               onChange={(e) => setAddTableNumber(e.target.value)}
-              className="rounded border border-venue-border bg-white px-3 py-2 text-venue-primary"
+              className="input-field"
               placeholder="e.g. 1"
               disabled={adding}
             />
           </div>
-          <div>
-            <label className="mb-1 block text-sm font-medium text-venue-muted">Zone (optional)</label>
+          <div className="min-w-[140px]">
+            <label className="mb-1.5 block text-sm font-medium text-venue-primary">
+              Zone (optional)
+            </label>
             <input
               type="text"
               value={addZone}
               onChange={(e) => setAddZone(e.target.value)}
-              className="rounded border border-venue-border bg-white px-3 py-2 text-venue-primary"
+              className="input-field"
               placeholder="e.g. A"
               disabled={adding}
             />
           </div>
-          <div>
-            <label className="mb-1 block text-sm font-medium text-venue-muted">Capacity</label>
+          <div className="min-w-[100px]">
+            <label className="mb-1.5 block text-sm font-medium text-venue-primary">
+              Capacity
+            </label>
             <input
               type="number"
               min={1}
               max={20}
               value={addCapacity}
               onChange={(e) => setAddCapacity(e.target.value)}
-              className="w-20 rounded border border-venue-border bg-white px-3 py-2 text-venue-primary"
+              className="input-field w-24"
               disabled={adding}
             />
           </div>
           <button
             type="submit"
             disabled={adding}
-            className="rounded bg-venue-primary px-4 py-2 text-sm font-medium text-white hover:opacity-90 disabled:opacity-60"
+            className="btn-primary disabled:opacity-50"
           >
             {adding ? 'Adding…' : 'Add table'}
           </button>
         </form>
-        {addError && <p className="mt-2 text-sm text-red-600">{addError}</p>}
+        {addError && (
+          <p className="mt-4 text-sm text-red-600">{addError}</p>
+        )}
       </Card>
 
-      <p className="mb-4">
-        <Link href="/admin/seating" className="text-sm font-medium text-venue-primary hover:underline">
-          View seating →
+      <div className="mb-6 flex items-center justify-between">
+        <h2 className="text-lg font-semibold text-venue-primary">All tables</h2>
+        <Link
+          href="/admin/seating"
+          className="text-sm font-medium text-venue-primary hover:underline"
+        >
+          View seating map →
         </Link>
-      </p>
+      </div>
 
       {safeTables.length === 0 ? (
-        <Card className="p-12 text-center">
-          <p className="font-medium text-venue-primary">No tables yet</p>
-          <p className="mt-1 text-sm text-venue-muted">Add a table above to get started.</p>
-        </Card>
+        <EmptyState
+          title="No tables yet"
+          description="Add a table above to get started."
+        />
       ) : (
-        <div className="space-y-3">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {safeTables.map((t) => (
-            <Card key={t.id} className="p-4">
-              <p className="font-semibold text-venue-primary">
-                {t.zone ? `${t.zone}-${t.tableNumber}` : `Table ${t.tableNumber}`}
-              </p>
-              <p className="text-sm text-venue-muted">
-                Capacity {t.capacity ?? 4} · {t.status === 'available' ? 'Available' : 'Occupied'}
+            <Card key={t.id} className="p-5 transition-shadow hover:shadow-card-hover">
+              <div className="flex items-center justify-between">
+                <p className="font-semibold text-venue-primary">
+                  {t.zone ? `${t.zone}-${t.tableNumber}` : `Table ${t.tableNumber}`}
+                </p>
+                <Badge variant={t.status === 'available' ? 'available' : 'occupied'}>
+                  {t.status === 'available' ? 'Available' : 'Occupied'}
+                </Badge>
+              </div>
+              <p className="mt-2 text-sm text-venue-muted">
+                Capacity {t.capacity ?? 4}
               </p>
             </Card>
           ))}

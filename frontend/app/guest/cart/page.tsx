@@ -96,12 +96,12 @@ export default function CartPage() {
         ) : orderItems.length === 0 ? (
           <EmptyState title="Your cart is empty" description="Add items from the menu." />
         ) : (
-          <div className="space-y-3">
+          <div className="space-y-4">
             {orderItems.map((item) => (
-              <Card key={item.id} className="flex items-center justify-between gap-4 p-4">
+              <Card key={item.id} className="flex items-center justify-between gap-5 p-5">
                 <div className="min-w-0 flex-1">
                   <h3 className="font-medium text-venue-primary">{item.menuItemName}</h3>
-                  <p className="text-sm text-venue-muted">
+                  <p className="mt-0.5 text-sm text-venue-muted">
                     {item.quantity} × ${item.priceAtOrder.toFixed(2)} = $
                     {(item.quantity * item.priceAtOrder).toFixed(2)}
                   </p>
@@ -110,15 +110,17 @@ export default function CartPage() {
                   type="button"
                   disabled={!!removingId}
                   onClick={() => handleRemove(item)}
-                  className="btn-secondary min-h-[44px] shrink-0 py-2 px-3 text-sm disabled:opacity-50"
+                  className="btn-secondary min-h-[44px] shrink-0 disabled:opacity-50"
                 >
                   Remove
                 </button>
               </Card>
             ))}
-            <p className="text-right font-semibold text-venue-primary">
-              Total: ${total.toFixed(2)}
-            </p>
+            <div className="rounded-xl border border-venue-border bg-white p-4">
+              <p className="text-right text-lg font-semibold text-venue-primary">
+                Total: ${total.toFixed(2)}
+              </p>
+            </div>
           </div>
         )}
       </PageContainer>

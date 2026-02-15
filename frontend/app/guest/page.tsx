@@ -38,21 +38,21 @@ export default function GuestEntryPage() {
   }
 
   return (
-    <main className="flex min-h-screen flex-col bg-venue-primary">
-      <div className="flex flex-1 flex-col items-center justify-center px-6 py-12">
-        <div className="max-w-sm text-center">
-          <p className="text-xs font-medium uppercase tracking-wider text-venue-accent sm:text-sm">
+    <main className="flex min-h-screen flex-1 flex-col bg-venue-primary">
+      <div className="flex flex-1 flex-col items-center justify-center px-6 py-16">
+        <div className="mx-auto max-w-sm text-center">
+          <p className="text-xs font-medium uppercase tracking-wider text-white/70 sm:text-sm">
             Welcome to
           </p>
-          <h1 className="mt-3 text-2xl font-semibold tracking-tight text-white sm:text-3xl">
+          <h1 className="mt-4 text-2xl font-semibold tracking-tight text-white sm:text-3xl">
             {VENUE_NAME}
           </h1>
-          <p className="mt-5 text-sm leading-relaxed text-white/85">
-            Order at your table. Tap below to get started.
+          <p className="mt-6 text-sm leading-relaxed text-white/85">
+            Order at your table. Browse the menu. Get seated automatically.
           </p>
         </div>
         {!apiConfigured && (
-          <p className="mt-4 text-center text-sm text-amber-200">
+          <p className="mt-6 text-center text-sm text-amber-200">
             Service is not configured. Please contact support.
           </p>
         )}
@@ -60,15 +60,15 @@ export default function GuestEntryPage() {
           type="button"
           onClick={handleStartOrder}
           disabled={loading || !apiConfigured}
-          className="btn-accent mt-10 w-full max-w-xs py-4 text-center text-base font-semibold disabled:opacity-50"
+          className="mt-12 w-full max-w-xs rounded-xl bg-white px-6 py-4 text-base font-semibold text-venue-primary transition-opacity hover:opacity-90 disabled:opacity-50"
         >
           {loading ? 'Starting…' : 'Start order'}
         </button>
         {error && (
-          <p className="mt-4 max-w-xs text-center text-sm text-red-200">{error}</p>
+          <p className="mt-6 max-w-xs text-center text-sm text-red-200">{error}</p>
         )}
       </div>
-      <p className="pb-6 text-center text-xs text-white/50">Powered by Venue Seat</p>
+      <p className="pb-8 text-center text-xs text-white/50">Powered by Venue Seat</p>
     </main>
   )
 }

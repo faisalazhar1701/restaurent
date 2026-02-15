@@ -2,8 +2,8 @@ import type { Metadata } from 'next'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'Venue Seat — Mall & Food Court',
-  description: 'Shared seating and ordering for malls and food courts',
+  title: 'Venue Seat — Mall & Food Court Operations',
+  description: 'Shared seating, ordering, and insights for malls and food courts',
 }
 
 export default function RootLayout({
@@ -13,7 +13,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className="min-h-screen antialiased">{children}</body>
+      <body className="flex min-h-screen flex-col bg-venue-surface text-venue-primary">
+        {children}
+      </body>
     </html>
   )
 }

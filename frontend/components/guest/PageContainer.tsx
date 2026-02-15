@@ -2,6 +2,9 @@
 
 import { type ReactNode } from 'react'
 
+/**
+ * Guest page layout: clear typography hierarchy, consistent spacing.
+ */
 export function PageContainer({
   title,
   subtitle,
@@ -12,12 +15,16 @@ export function PageContainer({
   children: ReactNode
 }) {
   return (
-    <div className="flex flex-1 flex-col">
-      <div className="mb-6">
-        <h1 className="text-xl font-semibold text-venue-primary">{title}</h1>
-        {subtitle && <p className="mt-0.5 text-sm text-venue-muted">{subtitle}</p>}
-      </div>
-      {children}
+    <div className="flex flex-1 flex-col px-4 pb-6 pt-6 sm:px-6">
+      <header className="mb-8">
+        <h1 className="text-2xl font-semibold tracking-tight text-venue-primary sm:text-3xl">
+          {title}
+        </h1>
+        {subtitle && (
+          <p className="mt-1 text-sm text-venue-muted">{subtitle}</p>
+        )}
+      </header>
+      <div className="flex-1">{children}</div>
     </div>
   )
 }

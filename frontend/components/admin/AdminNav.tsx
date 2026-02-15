@@ -16,13 +16,15 @@ export function AdminNav() {
   ]
 
   return (
-    <nav className="flex flex-col p-2">
+    <nav className="flex flex-col gap-0.5 p-4">
       {nav.map(({ href, label }) => (
         <Link
           key={href}
           href={href}
-          className={`rounded px-3 py-2 text-sm ${
-            pathname === href ? 'bg-white/10' : 'hover:bg-white/5'
+          className={`rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
+            pathname === href
+              ? 'bg-venue-primary/5 text-venue-primary'
+              : 'text-venue-muted hover:bg-venue-surface hover:text-venue-primary'
           }`}
         >
           {label}
@@ -34,7 +36,7 @@ export function AdminNav() {
           clearAdminToken()
           window.location.href = '/admin/login'
         }}
-        className="mt-2 rounded px-3 py-2 text-left text-sm text-white/80 hover:bg-white/5"
+        className="mt-4 rounded-lg px-3 py-2.5 text-left text-sm font-medium text-venue-muted transition-colors hover:bg-venue-surface hover:text-venue-primary"
       >
         Sign out
       </button>

@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { PageContainer } from '@/components/guest/PageContainer'
 import { BottomBar } from '@/components/guest/BottomBar'
 import { Card } from '@/components/ui/Card'
-import { ORDER_PATHS } from '@/lib/dummy-data'
+import { ORDER_PATHS, VENUE_NAME } from '@/lib/dummy-data'
 import { getGuestSession } from '@/lib/session'
 
 export default function OrderPathPage() {
@@ -17,16 +17,16 @@ export default function OrderPathPage() {
 
   return (
     <>
-      <PageContainer title="How would you like to order?" subtitle="">
-        <div className="space-y-3">
+      <PageContainer title="How would you like to order?" subtitle={VENUE_NAME}>
+        <div className="space-y-4">
           {ORDER_PATHS.map((p) => (
-            <Card key={p.id} className="p-5">
+            <Card key={p.id} className="p-6 transition-shadow hover:shadow-card-hover">
               <h3 className="font-semibold text-venue-primary">{p.title}</h3>
-              <p className="mt-1 text-sm text-venue-muted">{p.description}</p>
+              <p className="mt-2 text-sm text-venue-muted">{p.description}</p>
               <button
                 type="button"
                 onClick={() => router.push('/guest/menu')}
-                className="btn-primary mt-3"
+                className="btn-primary mt-4"
               >
                 Order now
               </button>
