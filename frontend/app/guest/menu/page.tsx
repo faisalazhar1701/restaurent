@@ -142,7 +142,12 @@ export default function MenuPage() {
           ))}
         </div>
         <div className="space-y-4">
-          {filteredItems.length === 0 ? (
+          {safeCategories.length === 0 ? (
+            <EmptyState
+              title="Menu is empty"
+              description="Products will appear here once added by the venue."
+            />
+          ) : filteredItems.length === 0 ? (
             <EmptyState title="No items in this category" description="Select another category." />
           ) : (
             filteredItems.map((item) => (

@@ -198,6 +198,66 @@ export async function getAdminOrders(): Promise<OrderResponse[]> {
   return toArray<OrderResponse>(await request<unknown>('/api/admin/orders'))
 }
 
+// Admin menu (products) API
+export type AdminMenuCategory = { id: string; name: string; count: number }
+export type AdminMenuItem = {
+  id: string
+  name: string
+  price: number
+  description?: string | null
+  isActive: boolean
+  categoryId: string
+  category?: { id: string; name: string }
+}
+
+export async function getAdminCategories(): Promise<AdminMenuCategory[]> {
+  return toArray<AdminMenuCategory>(await request<unknown>('/api/admin/menu/categories'))
+}
+
+export async function createAdminCategory(name: string): Promise<AdminMenuCategory> {
+  return request<AdminMenuCategory>('/api/admin/menu/categories', {
+    method: 'POST',
+    body: JSON.stringify({ name: name.trim() }),
+  })
+}
+
+export async function updateAdminCategory(id: string, name: string): Promise<{ id: string; name: string }> {
+  return request<{ id: string; name: string }>(`/api/admin/menu/categories/${id}`, {
+    method: 'PATCH',
+    body: JSON.stringify({ name: name.trim() }),
+  })
+}
+
+export async function getAdminItems(categoryId?: string): Promise<AdminMenuItem[]> {
+  const data = await request<unknown>('/api/admin/menu/items', {
+    params: categoryId ? { categoryId } : undefined,
+  })
+  return toArray<AdminMenuItem>(data)
+}
+
+export async function createAdminItem(params: {
+  name: string
+  price: number
+  description?: string | null
+  categoryId: string
+  isActive?: boolean
+}): Promise<AdminMenuItem> {
+  return request<AdminMenuItem>('/api/admin/menu/items', {
+    method: 'POST',
+    body: JSON.stringify(params),
+  })
+}
+
+export async function updateAdminItem(
+  id: string,
+  params: Partial<{ name: string; price: number; description: string | null; isActive: boolean; categoryId: string }>
+): Promise<AdminMenuItem> {
+  return request<AdminMenuItem>(`/api/admin/menu/items/${id}`, {
+    method: 'PATCH',
+    body: JSON.stringify(params),
+  })
+}
+
 export type AdminLoginResponse = { token: string; user: { id: string; role: string } }
 
 export async function adminLogin(email: string, password: string): Promise<AdminLoginResponse> {

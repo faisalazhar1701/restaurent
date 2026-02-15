@@ -9,6 +9,7 @@ import authRoutes from './routes/authRoutes.js';
 import seatingRoutes from './routes/seatingRoutes.js';
 import orderRoutes from './routes/orderRoutes.js';
 import adminOrderRoutes from './routes/adminOrderRoutes.js';
+import adminMenuRoutes from './routes/adminMenuRoutes.js';
 
 const app = express();
 
@@ -24,6 +25,7 @@ app.use('/api/menu', menuRoutes);
 app.use('/api/tables', tableRoutes);
 app.use('/api/seating', seatingRoutes);
 app.use('/api/orders', orderRoutes);
+app.use('/api/admin/menu', adminMenuRoutes);
 app.use('/api/admin', adminOrderRoutes);
 app.use('/api/auth', authRoutes);
 

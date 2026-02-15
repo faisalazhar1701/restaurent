@@ -11,6 +11,7 @@ import { VENUE_NAME } from '@/lib/dummy-data'
 import { getGuestSession } from '@/lib/session'
 import {
   createOrGetDraftOrder,
+  addOrderItem,
   removeOrderItem,
   type OrderResponse,
   type OrderItemResponse,
@@ -22,7 +23,15 @@ export default function CartPage() {
   const [order, setOrder] = useState<OrderResponse | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [removingId, setRemovingId] = useState<string | null>(null)
+  const [updatingId, setUpdatingId] = useState<string | null>(null)
+
+  const refreshCart = async () => {
+    const session = getGuestSession()
+    if (!session) return null
+    const draft = await createOrGetDraftOrder(session.sessionId)
+    setOrder(draft)
+    return draft
+  }
 
   useEffect(() => {
     const session = getGuestSession()
@@ -52,18 +61,41 @@ export default function CartPage() {
     return () => { cancelled = true }
   }, [router])
 
+  const handleUpdateQuantity = async (item: OrderItemResponse, delta: number) => {
+    const session = getGuestSession()
+    if (!session || !order || order.status !== 'draft') return
+    const newQty = item.quantity + delta
+    setUpdatingId(item.id)
+    try {
+      if (newQty < 1) {
+        await removeOrderItem(item.id, session.sessionId)
+      } else {
+        await addOrderItem({
+          orderId: order.id,
+          menuItemId: item.menuItemId,
+          quantity: newQty,
+          sessionId: session.sessionId,
+        })
+      }
+      await refreshCart()
+    } catch {
+      setError('Could not update quantity. Please try again.')
+    } finally {
+      setUpdatingId(null)
+    }
+  }
+
   const handleRemove = async (item: OrderItemResponse) => {
     const session = getGuestSession()
     if (!session) return
-    setRemovingId(item.id)
+    setUpdatingId(item.id)
     try {
       await removeOrderItem(item.id, session.sessionId)
-      const draft = await createOrGetDraftOrder(session.sessionId)
-      setOrder(draft)
+      await refreshCart()
     } catch {
       setError('Could not remove item. Please try again.')
     } finally {
-      setRemovingId(null)
+      setUpdatingId(null)
     }
   }
 
@@ -98,19 +130,44 @@ export default function CartPage() {
         ) : (
           <div className="space-y-4">
             {orderItems.map((item) => (
-              <Card key={item.id} className="flex items-center justify-between gap-5 p-5">
+              <Card key={item.id} className="flex items-center justify-between gap-4 p-5">
                 <div className="min-w-0 flex-1">
                   <h3 className="font-medium text-venue-primary">{item.menuItemName}</h3>
                   <p className="mt-0.5 text-sm text-venue-muted">
-                    {item.quantity} × ${item.priceAtOrder.toFixed(2)} = $
-                    {(item.quantity * item.priceAtOrder).toFixed(2)}
+                    ${item.priceAtOrder.toFixed(2)} each
                   </p>
                 </div>
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    disabled={!!updatingId}
+                    onClick={() => handleUpdateQuantity(item, -1)}
+                    className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-venue-border bg-white text-lg font-medium text-venue-primary hover:bg-venue-surface disabled:opacity-50"
+                    aria-label="Decrease quantity"
+                  >
+                    −
+                  </button>
+                  <span className="min-w-[2rem] text-center font-semibold text-venue-primary">
+                    {item.quantity}
+                  </span>
+                  <button
+                    type="button"
+                    disabled={!!updatingId}
+                    onClick={() => handleUpdateQuantity(item, 1)}
+                    className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-venue-border bg-white text-lg font-medium text-venue-primary hover:bg-venue-surface disabled:opacity-50"
+                    aria-label="Increase quantity"
+                  >
+                    +
+                  </button>
+                </div>
+                <p className="w-20 shrink-0 text-right font-semibold text-venue-primary">
+                  ${(item.quantity * item.priceAtOrder).toFixed(2)}
+                </p>
                 <button
                   type="button"
-                  disabled={!!removingId}
+                  disabled={!!updatingId}
                   onClick={() => handleRemove(item)}
-                  className="btn-secondary min-h-[44px] shrink-0 disabled:opacity-50"
+                  className="btn-secondary min-h-[44px] shrink-0 text-sm disabled:opacity-50"
                 >
                   Remove
                 </button>

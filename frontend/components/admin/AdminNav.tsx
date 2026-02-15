@@ -9,6 +9,7 @@ export function AdminNav() {
 
   const nav = [
     { href: '/admin', label: 'Dashboard' },
+    { href: '/admin/products', label: 'Products' },
     { href: '/admin/seating', label: 'Seating' },
     { href: '/admin/tables', label: 'Tables' },
     { href: '/admin/orders', label: 'Orders' },
