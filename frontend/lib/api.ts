@@ -198,8 +198,32 @@ export async function getAdminOrders(): Promise<OrderResponse[]> {
   return toArray<OrderResponse>(await request<unknown>('/api/admin/orders'))
 }
 
+// Admin restaurants
+export type AdminRestaurant = { id: string; name: string; isActive: boolean }
+
+export async function getAdminRestaurants(): Promise<AdminRestaurant[]> {
+  return toArray<AdminRestaurant>(await request<unknown>('/api/admin/restaurants'))
+}
+
+export async function createAdminRestaurant(name: string): Promise<AdminRestaurant> {
+  return request<AdminRestaurant>('/api/admin/restaurants', {
+    method: 'POST',
+    body: JSON.stringify({ name: name.trim() }),
+  })
+}
+
+export async function updateAdminRestaurant(
+  id: string,
+  params: Partial<{ name: string; isActive: boolean }>
+): Promise<AdminRestaurant> {
+  return request<AdminRestaurant>(`/api/admin/restaurants/${id}`, {
+    method: 'PATCH',
+    body: JSON.stringify(params),
+  })
+}
+
 // Admin menu (products) API
-export type AdminMenuCategory = { id: string; name: string; count: number }
+export type AdminMenuCategory = { id: string; name: string; count: number; restaurantId?: string | null; orderIndex?: number; isActive?: boolean }
 export type AdminMenuItem = {
   id: string
   name: string
@@ -207,17 +231,21 @@ export type AdminMenuItem = {
   description?: string | null
   isActive: boolean
   categoryId: string
+  restaurantId?: string | null
   category?: { id: string; name: string }
 }
 
-export async function getAdminCategories(): Promise<AdminMenuCategory[]> {
-  return toArray<AdminMenuCategory>(await request<unknown>('/api/admin/menu/categories'))
+export async function getAdminCategories(restaurantId?: string | null): Promise<AdminMenuCategory[]> {
+  const data = await request<unknown>('/api/admin/menu/categories', {
+    params: restaurantId != null && restaurantId !== '' ? { restaurantId } : undefined,
+  })
+  return toArray<AdminMenuCategory>(data)
 }
 
-export async function createAdminCategory(name: string): Promise<AdminMenuCategory> {
+export async function createAdminCategory(name: string, restaurantId?: string | null): Promise<AdminMenuCategory> {
   return request<AdminMenuCategory>('/api/admin/menu/categories', {
     method: 'POST',
-    body: JSON.stringify({ name: name.trim() }),
+    body: JSON.stringify({ name: name.trim(), restaurantId: restaurantId || null }),
   })
 }
 
@@ -228,9 +256,12 @@ export async function updateAdminCategory(id: string, name: string): Promise<{ i
   })
 }
 
-export async function getAdminItems(categoryId?: string): Promise<AdminMenuItem[]> {
+export async function getAdminItems(categoryId?: string, restaurantId?: string | null): Promise<AdminMenuItem[]> {
+  const params: Record<string, string> = {}
+  if (categoryId) params.categoryId = categoryId
+  if (restaurantId != null && restaurantId !== '') params.restaurantId = restaurantId
   const data = await request<unknown>('/api/admin/menu/items', {
-    params: categoryId ? { categoryId } : undefined,
+    params: Object.keys(params).length ? params : undefined,
   })
   return toArray<AdminMenuItem>(data)
 }
@@ -240,6 +271,7 @@ export async function createAdminItem(params: {
   price: number
   description?: string | null
   categoryId: string
+  restaurantId?: string | null
   isActive?: boolean
 }): Promise<AdminMenuItem> {
   return request<AdminMenuItem>('/api/admin/menu/items', {

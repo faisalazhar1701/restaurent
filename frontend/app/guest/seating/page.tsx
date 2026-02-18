@@ -7,7 +7,7 @@ import { BottomBar } from '@/components/guest/BottomBar'
 import { Card } from '@/components/ui/Card'
 import { Skeleton } from '@/components/ui/Skeleton'
 import { VENUE_NAME } from '@/lib/dummy-data'
-import { getGuestSession, getGuestPrefs, clearGuestSession } from '@/lib/session'
+import { getGuestSession, getGuestPrefs, getGuestQrContext, clearGuestSession } from '@/lib/session'
 import {
   assignTable,
   createOrGetDraftOrder,
@@ -20,6 +20,7 @@ export default function SeatingPage() {
   const router = useRouter()
   const [loading, setLoading] = useState(true)
   const [table, setTable] = useState<{ tableNumber: number; zone: string | null } | null>(null)
+  const [preAssigned, setPreAssigned] = useState(false)
   const [order, setOrder] = useState<OrderResponse | null>(null)
   const [placed, setPlaced] = useState(false)
   const [placing, setPlacing] = useState(false)
@@ -32,9 +33,24 @@ export default function SeatingPage() {
       router.replace('/guest')
       return
     }
-    const sessionId = session.sessionId
     const prefs = getGuestPrefs()
-    const guestCount = prefs?.guestCount ?? 2
+    const guestCount = prefs?.guestCount
+    if (guestCount == null || guestCount < 1) {
+      router.replace('/guest/dine-in')
+      return
+    }
+    const qr = getGuestQrContext()
+    const isTableQr = qr?.source === 'table' && qr?.tableId != null && qr?.zoneId != null
+    if (isTableQr && qr.tableId && qr.zoneId) {
+      const tableNumber = parseInt(qr.tableId, 10)
+      if (Number.isInteger(tableNumber)) {
+        setTable({ tableNumber, zone: qr.zoneId })
+        setPreAssigned(true)
+        setLoading(false)
+        return
+      }
+    }
+    const sessionId = session.sessionId
     let cancelled = false
     async function doAssign() {
       try {
@@ -140,7 +156,9 @@ export default function SeatingPage() {
           <p className="text-4xl font-bold tracking-tight text-venue-primary sm:text-5xl">
             Table {table?.zone ? `${table.zone}-` : ''}{table?.tableNumber}
           </p>
-          <p className="mt-3 text-venue-muted">Your table has been assigned.</p>
+          <p className="mt-3 text-venue-muted">
+            {preAssigned ? 'Pre-assigned (scanned at table).' : 'Your table has been assigned.'}
+          </p>
         </Card>
         {canPlace && (
           <div className="mt-8">

@@ -71,19 +71,33 @@ model RestaurantTable {
   status      TableStatus @default(available)
 }
 
+model Restaurant {
+  id        String         @id @default(cuid())
+  name      String
+  isActive  Boolean        @default(true)
+  categories MenuCategory[]
+  menuItems  MenuItem[]
+}
+
 model MenuCategory {
-  id    String     @id @default(cuid())
-  name  String
-  items MenuItem[]
+  id           String     @id @default(cuid())
+  restaurantId String?
+  restaurant   Restaurant? @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+  name         String
+  orderIndex   Int        @default(0)
+  isActive     Boolean    @default(true)
+  items        MenuItem[]
 }
 
 model MenuItem {
-  id          String       @id @default(cuid())
-  name        String
-  price       Decimal      @db.Decimal(10, 2)
-  description String?
-  isActive    Boolean      @default(true)
-  categoryId  String
-  category    MenuCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
-  orderItems  OrderItem[]
+  id           String       @id @default(cuid())
+  restaurantId String?
+  restaurant   Restaurant?   @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+  categoryId   String
+  category     MenuCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  name         String
+  description  String?
+  price        Decimal      @db.Decimal(10, 2)
+  isActive     Boolean      @default(true)
+  orderItems   OrderItem[]
 }

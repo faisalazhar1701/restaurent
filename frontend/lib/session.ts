@@ -1,6 +1,35 @@
 const GUEST_TOKEN_KEY = 'guest_token'
 const GUEST_SESSION_ID_KEY = 'guest_session_id'
 const GUEST_PREFS_KEY = 'guest_prefs'
+const GUEST_QR_CONTEXT_KEY = 'guest_qr_context'
+
+export type GuestQrSource = 'entry' | 'table'
+
+export type GuestQrContext = {
+  source: GuestQrSource
+  tableId?: string
+  zoneId?: string
+}
+
+export function getGuestQrContext(): GuestQrContext | null {
+  if (typeof window === 'undefined') return null
+  try {
+    const raw = localStorage.getItem(GUEST_QR_CONTEXT_KEY)
+    return raw ? (JSON.parse(raw) as GuestQrContext) : null
+  } catch {
+    return null
+  }
+}
+
+export function setGuestQrContext(ctx: GuestQrContext): void {
+  if (typeof window === 'undefined') return
+  localStorage.setItem(GUEST_QR_CONTEXT_KEY, JSON.stringify(ctx))
+}
+
+export function clearGuestQrContext(): void {
+  if (typeof window === 'undefined') return
+  localStorage.removeItem(GUEST_QR_CONTEXT_KEY)
+}
 
 export function getGuestSession(): { token: string; sessionId: string } | null {
   if (typeof window === 'undefined') return null
@@ -21,6 +50,7 @@ export function clearGuestSession(): void {
   localStorage.removeItem(GUEST_TOKEN_KEY)
   localStorage.removeItem(GUEST_SESSION_ID_KEY)
   localStorage.removeItem(GUEST_PREFS_KEY)
+  localStorage.removeItem(GUEST_QR_CONTEXT_KEY)
 }
 
 export type GuestPrefs = { guestCount?: number; dineIn?: boolean }

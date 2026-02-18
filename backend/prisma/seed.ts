@@ -15,29 +15,37 @@ async function main() {
   });
   console.log('Admin user:', admin.id);
 
-  // Menu categories (aligned with frontend dummy data)
+  // Default restaurant for menu
+  const defaultRestaurant = await prisma.restaurant.upsert({
+    where: { id: 'restaurant-default' },
+    update: { isActive: true },
+    create: { id: 'restaurant-default', name: 'Central Food Court', isActive: true },
+  });
+  console.log('Default restaurant:', defaultRestaurant.id);
+
+  // Menu categories (scoped to default restaurant)
   const hot = await prisma.menuCategory.upsert({
     where: { id: 'cat-hot' },
-    update: { name: 'Hot meals' },
-    create: { id: 'cat-hot', name: 'Hot meals' },
+    update: { name: 'Hot meals', restaurantId: defaultRestaurant.id, isActive: true },
+    create: { id: 'cat-hot', name: 'Hot meals', restaurantId: defaultRestaurant.id, orderIndex: 0, isActive: true },
   });
   const cold = await prisma.menuCategory.upsert({
     where: { id: 'cat-cold' },
-    update: { name: 'Salads & cold' },
-    create: { id: 'cat-cold', name: 'Salads & cold' },
+    update: { name: 'Salads & cold', restaurantId: defaultRestaurant.id, isActive: true },
+    create: { id: 'cat-cold', name: 'Salads & cold', restaurantId: defaultRestaurant.id, orderIndex: 1, isActive: true },
   });
   const drinks = await prisma.menuCategory.upsert({
     where: { id: 'cat-drinks' },
-    update: { name: 'Drinks' },
-    create: { id: 'cat-drinks', name: 'Drinks' },
+    update: { name: 'Drinks', restaurantId: defaultRestaurant.id, isActive: true },
+    create: { id: 'cat-drinks', name: 'Drinks', restaurantId: defaultRestaurant.id, orderIndex: 2, isActive: true },
   });
   const desserts = await prisma.menuCategory.upsert({
     where: { id: 'cat-desserts' },
-    update: { name: 'Desserts' },
-    create: { id: 'cat-desserts', name: 'Desserts' },
+    update: { name: 'Desserts', restaurantId: defaultRestaurant.id, isActive: true },
+    create: { id: 'cat-desserts', name: 'Desserts', restaurantId: defaultRestaurant.id, orderIndex: 3, isActive: true },
   });
 
-  // Menu items
+  // Menu items (scoped to default restaurant)
   const items = [
     { id: 'item-1', name: 'Grilled chicken bowl', categoryId: hot.id, price: 12.5, description: 'Rice, greens, house sauce' },
     { id: 'item-2', name: 'Beef burger & fries', categoryId: hot.id, price: 14, description: 'Angus beef, brioche bun' },
@@ -51,8 +59,8 @@ async function main() {
   for (const item of items) {
     await prisma.menuItem.upsert({
       where: { id: item.id },
-      update: { name: item.name, price: item.price, description: item.description },
-      create: { ...item, isActive: true },
+      update: { name: item.name, price: item.price, description: item.description ?? null, restaurantId: defaultRestaurant.id },
+      create: { ...item, description: item.description ?? null, restaurantId: defaultRestaurant.id, isActive: true },
     });
   }
 

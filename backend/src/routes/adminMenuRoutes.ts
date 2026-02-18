@@ -4,11 +4,13 @@ import { AppError } from '../middleware/errorHandler.js';
 
 const router = Router();
 
-/** GET /api/admin/menu/categories — list all categories */
-router.get('/categories', async (_req: Request, res: Response, next: NextFunction) => {
+/** GET /api/admin/menu/categories — list categories, optional ?restaurantId= */
+router.get('/categories', async (req: Request, res: Response, next: NextFunction) => {
   try {
+    const restaurantId = (req.query.restaurantId as string) || undefined;
     const categories = await prisma.menuCategory.findMany({
-      orderBy: { name: 'asc' },
+      where: restaurantId ? { restaurantId } : {},
+      orderBy: [{ orderIndex: 'asc' }, { name: 'asc' }],
       include: { _count: { select: { items: true } } },
     });
     res.json(
@@ -16,6 +18,9 @@ router.get('/categories', async (_req: Request, res: Response, next: NextFunctio
         id: c.id,
         name: c.name,
         count: c._count.items,
+        restaurantId: c.restaurantId,
+        orderIndex: c.orderIndex,
+        isActive: c.isActive,
       }))
     );
   } catch (e) {
@@ -27,13 +32,21 @@ router.get('/categories', async (_req: Request, res: Response, next: NextFunctio
 router.post('/categories', async (req: Request, res: Response, next: NextFunction) => {
   try {
     const name = (req.body.name as string)?.trim();
+    const restaurantId = (req.body.restaurantId as string) || null;
     if (!name) {
       throw new AppError(400, 'Name is required');
     }
     const category = await prisma.menuCategory.create({
-      data: { name },
+      data: { name, restaurantId, orderIndex: 0, isActive: true },
     });
-    res.status(201).json({ id: category.id, name: category.name, count: 0 });
+    res.status(201).json({
+      id: category.id,
+      name: category.name,
+      count: 0,
+      restaurantId: category.restaurantId,
+      orderIndex: category.orderIndex,
+      isActive: category.isActive,
+    });
   } catch (e) {
     next(e);
   }
@@ -45,26 +58,46 @@ router.patch('/categories/:id', async (req: Request, res: Response, next: NextFu
     const rawId = req.params.id;
     const id = Array.isArray(rawId) ? rawId[0] : rawId;
     if (!id) throw new AppError(400, 'Category id is required');
-    const name = (req.body.name as string)?.trim();
-    if (!name) {
-      throw new AppError(400, 'Name is required');
+    const body = req.body as { name?: string; orderIndex?: number; isActive?: boolean };
+    const updateData: { name?: string; orderIndex?: number; isActive?: boolean } = {};
+    if (typeof body.name === 'string' && body.name.trim()) {
+      updateData.name = body.name.trim();
+    }
+    if (typeof body.orderIndex === 'number') {
+      updateData.orderIndex = body.orderIndex;
+    }
+    if (typeof body.isActive === 'boolean') {
+      updateData.isActive = body.isActive;
+    }
+    if (Object.keys(updateData).length === 0) {
+      throw new AppError(400, 'No valid fields to update');
     }
     const category = await prisma.menuCategory.update({
       where: { id },
-      data: { name },
+      data: updateData,
     });
-    res.json({ id: category.id, name: category.name });
+    res.json({
+      id: category.id,
+      name: category.name,
+      restaurantId: category.restaurantId,
+      orderIndex: category.orderIndex,
+      isActive: category.isActive,
+    });
   } catch (e) {
     next(e);
   }
 });
 
-/** GET /api/admin/menu/items — list all items (including inactive), optional ?categoryId= */
+/** GET /api/admin/menu/items — list items (including inactive), optional ?categoryId= ?restaurantId= */
 router.get('/items', async (req: Request, res: Response, next: NextFunction) => {
   try {
     const categoryId = req.query.categoryId as string | undefined;
+    const restaurantId = req.query.restaurantId as string | undefined;
+    const where: { categoryId?: string; restaurantId?: string | null } = {};
+    if (categoryId) where.categoryId = categoryId;
+    if (restaurantId !== undefined) where.restaurantId = restaurantId || null;
     const items = await prisma.menuItem.findMany({
-      where: categoryId ? { categoryId } : {},
+      where: Object.keys(where).length ? where : {},
       orderBy: [{ category: { name: 'asc' } }, { name: 'asc' }],
       include: { category: { select: { id: true, name: true } } },
     });
@@ -76,6 +109,7 @@ router.get('/items', async (req: Request, res: Response, next: NextFunction) => 
         description: i.description,
         isActive: i.isActive,
         categoryId: i.categoryId,
+        restaurantId: i.restaurantId,
         category: i.category,
       }))
     );
@@ -91,6 +125,7 @@ router.post('/items', async (req: Request, res: Response, next: NextFunction) =>
     const price = Number(req.body.price);
     const description = (req.body.description as string)?.trim() || null;
     const categoryId = req.body.categoryId as string;
+    const restaurantId = (req.body.restaurantId as string) || null;
     const isActive = req.body.isActive !== false;
 
     if (!name) {
@@ -109,7 +144,7 @@ router.post('/items', async (req: Request, res: Response, next: NextFunction) =>
     }
 
     const item = await prisma.menuItem.create({
-      data: { name, price, description, categoryId, isActive },
+      data: { name, price, description, categoryId, restaurantId: restaurantId || category.restaurantId, isActive },
       include: { category: { select: { id: true, name: true } } },
     });
     res.status(201).json({
@@ -119,6 +154,7 @@ router.post('/items', async (req: Request, res: Response, next: NextFunction) =>
       description: item.description,
       isActive: item.isActive,
       categoryId: item.categoryId,
+      restaurantId: item.restaurantId,
       category: item.category,
     });
   } catch (e) {
@@ -126,7 +162,7 @@ router.post('/items', async (req: Request, res: Response, next: NextFunction) =>
   }
 });
 
-/** PATCH /api/admin/menu/items/:id — update item */
+/** PATCH /api/admin/menu/items/:id — update item (including isActive toggle) */
 router.patch('/items/:id', async (req: Request, res: Response, next: NextFunction) => {
   try {
     const rawId = req.params.id;

@@ -6,13 +6,20 @@ import { PageContainer } from '@/components/guest/PageContainer'
 import { BottomBar } from '@/components/guest/BottomBar'
 import { Card } from '@/components/ui/Card'
 import { ORDER_PATHS, VENUE_NAME } from '@/lib/dummy-data'
-import { getGuestSession } from '@/lib/session'
+import { getGuestSession, getGuestPrefs } from '@/lib/session'
 
 export default function OrderPathPage() {
   const router = useRouter()
 
   useEffect(() => {
-    if (!getGuestSession()) router.replace('/guest')
+    if (!getGuestSession()) {
+      router.replace('/guest')
+      return
+    }
+    const prefs = getGuestPrefs()
+    if (prefs?.guestCount == null || prefs.guestCount < 1) {
+      router.replace('/guest/dine-in')
+    }
   }, [router])
 
   return (

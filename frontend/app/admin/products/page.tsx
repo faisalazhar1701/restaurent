@@ -6,18 +6,22 @@ import { Badge } from '@/components/ui/Badge'
 import { Skeleton } from '@/components/ui/Skeleton'
 import { EmptyState } from '@/components/ui/EmptyState'
 import {
+  getAdminRestaurants,
   getAdminCategories,
   getAdminItems,
   createAdminCategory,
   createAdminItem,
   updateAdminCategory,
   updateAdminItem,
+  type AdminRestaurant,
   type AdminMenuCategory,
   type AdminMenuItem,
   ApiError,
 } from '@/lib/api'
 
 export default function AdminProductsPage() {
+  const [restaurants, setRestaurants] = useState<AdminRestaurant[]>([])
+  const [selectedRestaurantId, setSelectedRestaurantId] = useState<string | ''>('')
   const [categories, setCategories] = useState<AdminMenuCategory[]>([])
   const [items, setItems] = useState<AdminMenuItem[]>([])
   const [loading, setLoading] = useState(true)
@@ -43,13 +47,28 @@ export default function AdminProductsPage() {
   const [submitting, setSubmitting] = useState(false)
   const [submitError, setSubmitError] = useState<string | null>(null)
 
+  const fetchRestaurants = async () => {
+    try {
+      const list = await getAdminRestaurants()
+      setRestaurants(Array.isArray(list) ? list : [])
+    } catch {
+      setRestaurants([])
+    }
+  }
+
   const fetchData = async () => {
+    if (selectedRestaurantId === '') {
+      setCategories([])
+      setItems([])
+      setLoading(false)
+      return
+    }
     setLoading(true)
     setError(null)
     try {
       const [cats, its] = await Promise.all([
-        getAdminCategories(),
-        getAdminItems(filterCategory || undefined),
+        getAdminCategories(selectedRestaurantId),
+        getAdminItems(filterCategory || undefined, selectedRestaurantId),
       ])
       setCategories(Array.isArray(cats) ? cats : [])
       setItems(Array.isArray(its) ? its : [])
@@ -61,18 +80,26 @@ export default function AdminProductsPage() {
   }
 
   useEffect(() => {
+    fetchRestaurants()
+  }, [])
+
+  useEffect(() => {
     fetchData()
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- filterCategory is the only dynamic dep
-  }, [filterCategory])
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- filterCategory and selectedRestaurantId
+  }, [filterCategory, selectedRestaurantId])
 
   const handleCreateCategory = async (e: React.FormEvent) => {
     e.preventDefault()
     const name = newCategoryName.trim()
     if (!name) return
+    if (!selectedRestaurantId) {
+      setSubmitError('Select a restaurant first.')
+      return
+    }
     setSubmitting(true)
     setSubmitError(null)
     try {
-      await createAdminCategory(name)
+      await createAdminCategory(name, selectedRestaurantId)
       setNewCategoryName('')
       setShowCategoryForm(false)
       await fetchData()
@@ -119,6 +146,7 @@ export default function AdminProductsPage() {
         price,
         description: itemForm.description.trim() || null,
         categoryId,
+        restaurantId: selectedRestaurantId || null,
         isActive: itemForm.isActive,
       })
       setItemForm({ name: '', price: '', description: '', categoryId: '', isActive: true })
@@ -213,10 +241,30 @@ export default function AdminProductsPage() {
         <p className="mt-1 text-sm text-venue-muted">
           Manage menu categories and items
         </p>
+        <div className="mt-4">
+          <label htmlFor="restaurant-select" className="mb-1 block text-sm font-medium text-venue-primary">
+            Restaurant
+          </label>
+          <select
+            id="restaurant-select"
+            value={selectedRestaurantId}
+            onChange={(e) => setSelectedRestaurantId(e.target.value)}
+            className="input-field w-auto max-w-[280px]"
+          >
+            <option value="">Select restaurant</option>
+            {restaurants.map((r) => (
+              <option key={r.id} value={r.id}>{r.name}</option>
+            ))}
+          </select>
+        </div>
       </header>
 
       {error && (
         <p className="mb-6 text-sm text-red-600">{error}</p>
+      )}
+
+      {selectedRestaurantId === '' && (
+        <p className="mb-6 text-sm text-venue-muted">Select a restaurant to manage its categories and products.</p>
       )}
 
       {/* Categories */}
@@ -224,9 +272,10 @@ export default function AdminProductsPage() {
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-lg font-semibold text-venue-primary">Categories</h2>
           <button
+            disabled={!selectedRestaurantId}
             type="button"
             onClick={() => setShowCategoryForm(!showCategoryForm)}
-            className="btn-primary text-sm"
+            className="btn-primary text-sm disabled:opacity-50"
           >
             {showCategoryForm ? 'Cancel' : 'Add category'}
           </button>
@@ -324,6 +373,7 @@ export default function AdminProductsPage() {
           </div>
           <button
             type="button"
+            disabled={!selectedRestaurantId}
             onClick={() => {
               setEditingItem(null)
               setItemForm({
@@ -335,7 +385,7 @@ export default function AdminProductsPage() {
               })
               setShowItemForm(!showItemForm)
             }}
-            className="btn-primary text-sm"
+            className="btn-primary text-sm disabled:opacity-50"
           >
             {showItemForm || editingItem ? 'Cancel' : 'Add product'}
           </button>
