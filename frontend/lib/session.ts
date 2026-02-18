@@ -53,7 +53,7 @@ export function clearGuestSession(): void {
   localStorage.removeItem(GUEST_QR_CONTEXT_KEY)
 }
 
-export type GuestPrefs = { guestCount?: number; dineIn?: boolean }
+export type GuestPrefs = { guestCount?: number; dineIn?: boolean; orderTiming?: 'now' | 'later' }
 
 export function getGuestPrefs(): GuestPrefs | null {
   if (typeof window === 'undefined') return null

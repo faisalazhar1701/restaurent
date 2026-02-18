@@ -6,7 +6,7 @@ import { PageContainer } from '@/components/guest/PageContainer'
 import { BottomBar } from '@/components/guest/BottomBar'
 import { Card } from '@/components/ui/Card'
 import { ORDER_PATHS, VENUE_NAME } from '@/lib/dummy-data'
-import { getGuestSession, getGuestPrefs } from '@/lib/session'
+import { getGuestSession, getGuestPrefs, setGuestPrefs } from '@/lib/session'
 
 export default function OrderPathPage() {
   const router = useRouter()
@@ -19,8 +19,23 @@ export default function OrderPathPage() {
     const prefs = getGuestPrefs()
     if (prefs?.guestCount == null || prefs.guestCount < 1) {
       router.replace('/guest/dine-in')
+      return
+    }
+    if (prefs?.orderTiming === 'now' || prefs?.orderTiming === 'later') {
+      router.replace('/guest/seating')
     }
   }, [router])
+
+  const handleSelect = (id: 'now' | 'later') => {
+    const prefs = getGuestPrefs() ?? {}
+    setGuestPrefs({ ...prefs, orderTiming: id })
+    const guestCount = prefs?.guestCount ?? 0
+    if (guestCount == null || guestCount < 1) {
+      router.replace('/guest/dine-in')
+    } else {
+      router.replace('/guest/seating')
+    }
+  }
 
   return (
     <>
@@ -32,10 +47,10 @@ export default function OrderPathPage() {
               <p className="mt-2 text-sm text-venue-muted">{p.description}</p>
               <button
                 type="button"
-                onClick={() => router.push('/guest/menu')}
+                onClick={() => handleSelect(p.id)}
                 className="btn-primary mt-4"
               >
-                Order now
+                {p.title}
               </button>
             </Card>
           ))}
