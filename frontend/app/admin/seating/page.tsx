@@ -6,7 +6,7 @@ import { Card } from '@/components/ui/Card'
 import { Badge } from '@/components/ui/Badge'
 import { Skeleton } from '@/components/ui/Skeleton'
 import { EmptyState } from '@/components/ui/EmptyState'
-import { getTables, type RestaurantTable, ApiError } from '@/lib/api'
+import { getTables, getAdminSessions, endAdminSession, type RestaurantTable, type AdminSession, ApiError } from '@/lib/api'
 
 function computeZones(tables: RestaurantTable[]) {
   const byZone = new Map<string, { total: number; occupied: number }>()
@@ -29,26 +29,38 @@ function computeZones(tables: RestaurantTable[]) {
 
 export default function AdminSeatingPage() {
   const [tables, setTables] = useState<RestaurantTable[]>([])
+  const [sessions, setSessions] = useState<AdminSession[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [endingId, setEndingId] = useState<string | null>(null)
+
+  const refresh = async () => {
+    try {
+      const [tData, sData] = await Promise.all([getTables(), getAdminSessions()])
+      setTables(Array.isArray(tData) ? tData : [])
+      setSessions(Array.isArray(sData) ? sData : [])
+    } catch (e) {
+      setError(e instanceof ApiError ? e.message : 'Could not load.')
+    }
+  }
 
   useEffect(() => {
     let cancelled = false
-    async function fetchTables() {
-      try {
-        const data = await getTables()
-        if (cancelled) return
-        setTables(Array.isArray(data) ? data : [])
-      } catch (e) {
-        if (cancelled) return
-        setError(e instanceof ApiError ? e.message : 'Could not load tables.')
-      } finally {
-        if (!cancelled) setLoading(false)
-      }
-    }
-    fetchTables()
+    refresh().finally(() => { if (!cancelled) setLoading(false) })
     return () => { cancelled = true }
   }, [])
+
+  const handleEndSession = async (sessionId: string) => {
+    setEndingId(sessionId)
+    try {
+      await endAdminSession(sessionId)
+      await refresh()
+    } catch (e) {
+      setError(e instanceof ApiError ? e.message : 'Could not end session.')
+    } finally {
+      setEndingId(null)
+    }
+  }
 
   if (loading) {
     return (
@@ -124,6 +136,34 @@ export default function AdminSeatingPage() {
           </div>
         )}
       </section>
+
+      {sessions.length > 0 && (
+        <section className="mb-12">
+          <h2 className="mb-4 text-lg font-semibold text-venue-primary">Active sessions</h2>
+          <div className="space-y-4">
+            {sessions.map((s) => (
+              <Card key={s.id} className="flex flex-wrap items-center justify-between gap-4 p-5">
+                <div>
+                  <p className="font-semibold text-venue-primary">
+                    Table {s.tableNumber ?? '—'}
+                  </p>
+                  <p className="text-sm text-venue-muted">
+                    {s.guestCount ?? '—'} guest(s) · started {new Date(s.createdAt).toLocaleString()}
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  disabled={!!endingId}
+                  onClick={() => handleEndSession(s.id)}
+                  className="btn-secondary text-sm disabled:opacity-50"
+                >
+                  {endingId === s.id ? 'Ending…' : 'End session'}
+                </button>
+              </Card>
+            ))}
+          </div>
+        </section>
+      )}
 
       <section>
         <h2 className="mb-4 text-lg font-semibold text-venue-primary">By zone</h2>

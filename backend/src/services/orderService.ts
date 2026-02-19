@@ -20,6 +20,16 @@ async function getDraftOrder(sessionId: string) {
   });
 }
 
+export async function getOrderForSession(sessionId: string) {
+  const draft = await getDraftOrder(sessionId);
+  if (draft) return draft;
+  return prisma.order.findFirst({
+    where: { sessionId, status: 'placed' },
+    orderBy: { createdAt: 'desc' },
+    include: { items: { include: { menuItem: true } } },
+  });
+}
+
 export async function createOrGetDraft(sessionId: string) {
   const session = await getActiveSession(sessionId);
   if (!session) {

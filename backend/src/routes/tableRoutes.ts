@@ -56,4 +56,45 @@ router.post('/', async (req: Request, res: Response, next: NextFunction) => {
   }
 });
 
+/** PATCH /api/tables/:id — update table status (available | occupied | disabled) */
+router.patch('/:id', async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const id = req.params.id as string;
+    const status = req.body.status as string | undefined;
+    const allowed = ['available', 'occupied', 'disabled'];
+    if (!status || !allowed.includes(status)) {
+      return res.status(400).json({
+        error: 'status is required and must be one of: available, occupied, disabled',
+      });
+    }
+    const existing = await prisma.restaurantTable.findUnique({ where: { id } });
+    if (!existing) throw new AppError(404, 'Table not found');
+    if (status === 'available') {
+      const activeSession = await prisma.session.findFirst({
+        where: {
+          tableNumber: existing.tableNumber,
+          endedAt: null,
+          expiresAt: { gt: new Date() },
+        },
+      });
+      if (activeSession) {
+        throw new AppError(400, 'Table is assigned to an active session. End the session first.');
+      }
+    }
+    const table = await prisma.restaurantTable.update({
+      where: { id },
+      data: { status: status as 'available' | 'occupied' | 'disabled' },
+    });
+    res.json({
+      id: table.id,
+      tableNumber: table.tableNumber,
+      zone: table.zone,
+      capacity: table.capacity,
+      status: table.status,
+    });
+  } catch (e) {
+    next(e);
+  }
+});
+
 export default router;

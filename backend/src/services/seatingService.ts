@@ -4,26 +4,47 @@ import { AppError } from '../middleware/errorHandler.js';
 
 const now = () => new Date();
 
-/** Session is active if it exists and expiresAt > now */
+/** Session is active if it exists, expiresAt > now, and endedAt is null */
 async function getActiveSession(sessionId: string) {
   const session = await prisma.session.findUnique({
     where: { id: sessionId },
   });
   if (!session) return null;
   if (session.expiresAt <= now()) return null;
+  if (session.endedAt != null) return null;
   return session;
 }
 
+/** Normalize zone for DB lookup: 'main' means null in DB */
+function normalizeZone(zone: string | null | undefined): string | null {
+  if (zone == null || zone === '') return null;
+  const z = String(zone).trim();
+  return z === 'main' ? null : z;
+}
+
 /**
- * Assign the lowest-numbered available table (in optional zone) to the session.
- * Atomic: lock row with FOR UPDATE SKIP LOCKED, then update table + session.
+ * Assign a table to the session.
+ * - If optionalTableNumber + optionalZone provided (table QR): assign that specific table if available and has capacity.
+ * - Else: find first available table with capacity >= guestCount, ordered by capacity ASC, tableNumber ASC.
+ * Only tables with status='available' can be assigned. Disabled tables are never assigned.
+ * @throws AppError 404 - Session not found or expired
+ * @throws AppError 409 - NO_TABLE_AVAILABLE (no suitable table found)
+ * @throws AppError 410 - TABLE_NOT_AVAILABLE (requested table unavailable or too small)
  */
 export async function assignTableToSession(params: {
   sessionId: string;
   zone?: string | null;
   guestCount?: number | null;
+  optionalTableNumber?: number | null;
+  optionalZone?: string | null;
 }): Promise<{ tableNumber: number; zone: string | null; status: string }> {
-  const { sessionId, zone, guestCount } = params;
+  const {
+    sessionId,
+    zone,
+    guestCount,
+    optionalTableNumber,
+    optionalZone,
+  } = params;
 
   const session = await getActiveSession(sessionId);
   if (!session) {
@@ -34,7 +55,7 @@ export async function assignTableToSession(params: {
     const existing = await prisma.restaurantTable.findFirst({
       where: { tableNumber: session.tableNumber },
     });
-    if (existing)
+    if (existing && existing.status !== 'disabled')
       return {
         tableNumber: existing.tableNumber,
         zone: existing.zone,
@@ -42,15 +63,74 @@ export async function assignTableToSession(params: {
       };
   }
 
-  const minCapacity = guestCount != null && guestCount >= 1 && guestCount <= 10 ? guestCount : 1;
+  const minCapacity =
+    guestCount != null && guestCount >= 1 && guestCount <= 10 ? guestCount : 1;
 
+  // Table QR: request specific table
+  if (
+    optionalTableNumber != null &&
+    Number.isInteger(optionalTableNumber) &&
+    optionalTableNumber >= 1
+  ) {
+    const lookupZone = normalizeZone(optionalZone);
+    const table = await prisma.restaurantTable.findFirst({
+      where: {
+        tableNumber: optionalTableNumber,
+        zone: lookupZone,
+      },
+    });
+    if (!table) {
+      throw new AppError(410, 'This table is not available. Please contact staff.');
+    }
+    if (table.status !== 'available') {
+      throw new AppError(410, 'This table is not available. Please contact staff.');
+    }
+    if (table.capacity < minCapacity) {
+      throw new AppError(410, 'This table is not available. Please contact staff.');
+    }
+
+    await prisma.$transaction(async (tx) => {
+      await tx.restaurantTable.update({
+        where: { id: table.id },
+        data: { status: 'occupied' },
+      });
+    await tx.session.update({
+      where: { id: sessionId },
+      data: {
+        tableNumber: table.tableNumber,
+        seatedAt: now(),
+        ...(guestCount != null && guestCount >= 1 && guestCount <= 10
+          ? { guestCount }
+          : {}),
+      },
+    });
+  });
+
+    return {
+      tableNumber: table.tableNumber,
+      zone: table.zone,
+      status: 'occupied',
+    };
+  }
+
+  // Auto-assign: find lowest-capacity available table
   const result = await prisma.$transaction(async (tx) => {
-    const zoneCondition =
-      zone === undefined || zone === null
-        ? Prisma.empty
-        : Prisma.sql`AND "zone" = ${zone}`;
+    let zoneCondition = Prisma.empty;
+    if (zone != null && zone !== '') {
+      if (String(zone).trim() === 'main') {
+        zoneCondition = Prisma.sql`AND "zone" IS NULL`;
+      } else {
+        zoneCondition = Prisma.sql`AND "zone" = ${zone}`;
+      }
+    }
     const rows = await tx.$queryRaw<
-      Array<{ id: string; tableNumber: number; zone: string | null; capacity: number; status: string }>
+      Array<{
+        id: string;
+        tableNumber: number;
+        zone: string | null;
+        capacity: number;
+        status: string;
+      }>
     >(
       Prisma.sql`
       SELECT id, "tableNumber", "zone", capacity, status
@@ -58,13 +138,17 @@ export async function assignTableToSession(params: {
       WHERE status = 'available'
       AND capacity >= ${minCapacity}
       ${zoneCondition}
-      ORDER BY "tableNumber" ASC
+      ORDER BY capacity ASC, "tableNumber" ASC
       LIMIT 1
       FOR UPDATE SKIP LOCKED
     `
     );
     const table = rows[0];
-    if (!table) throw new AppError(409, 'No table available');
+    if (!table)
+      throw new AppError(
+        409,
+        'All tables suitable for your group are currently occupied. Please wait.'
+      );
 
     await tx.restaurantTable.update({
       where: { id: table.id },
@@ -75,6 +159,7 @@ export async function assignTableToSession(params: {
       where: { id: sessionId },
       data: {
         tableNumber: table.tableNumber,
+        seatedAt: now(),
         ...(guestCount != null && guestCount >= 1 && guestCount <= 10
           ? { guestCount }
           : {}),
@@ -94,6 +179,7 @@ export async function assignTableToSession(params: {
 /**
  * Release the table assigned to the session and mark session as expired.
  * Atomic: update table status to available and clear session assignment.
+ * Does not change tables that are disabled (admin-set).
  */
 export async function releaseTable(sessionId: string): Promise<void> {
   const session = await prisma.session.findUnique({
@@ -109,8 +195,12 @@ export async function releaseTable(sessionId: string): Promise<void> {
   }
 
   await prisma.$transaction(async (tx) => {
+    // Only set to available if currently occupied (do not override disabled)
     await tx.restaurantTable.updateMany({
-      where: { tableNumber: session!.tableNumber! },
+      where: {
+        tableNumber: session!.tableNumber!,
+        status: 'occupied',
+      },
       data: { status: 'available' },
     });
     await tx.session.update({

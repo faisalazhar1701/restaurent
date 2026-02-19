@@ -106,6 +106,8 @@ export async function assignTable(params: {
   sessionId: string
   zone?: string | null
   guestCount?: number | null
+  optionalTableNumber?: number | null
+  optionalZone?: string | null
 }): Promise<AssignTableResult> {
   return request<AssignTableResult>('/api/seating/assign', {
     method: 'POST',
@@ -133,6 +135,7 @@ export type OrderResponse = {
   sessionId: string
   tableNumber: number | null
   status: string
+  paymentStatus?: string | null
   createdAt: string
   items: OrderItemResponse[]
 }
@@ -171,6 +174,51 @@ export async function placeOrderApi(orderId: string, sessionId: string): Promise
   })
 }
 
+export async function getOrderForSession(sessionId: string): Promise<OrderResponse> {
+  return request<OrderResponse>('/api/orders/for-session', {
+    params: { sessionId },
+  })
+}
+
+export async function getSeatingStatus(sessionId: string): Promise<{ tableNumber: number | null; zone: string | null }> {
+  return request<{ tableNumber: number | null; zone: string | null }>('/api/seating/status', {
+    params: { sessionId },
+  })
+}
+
+export async function isPaymentEnabled(): Promise<boolean> {
+  try {
+    const base = getApiBaseUrlOrNull()
+    if (!base) return false
+    const res = await fetch(`${base}/api/payment/enabled`)
+    const data = await res.json().catch(() => ({}))
+    return !!data?.enabled
+  } catch {
+    return false
+  }
+}
+
+export async function createPaymentCheckout(params: {
+  orderId: string
+  sessionId: string
+  guestCount: number
+  zone?: string | null
+  optionalTableNumber?: number | null
+  optionalZone?: string | null
+}): Promise<{ checkoutUrl: string }> {
+  return request<{ checkoutUrl: string }>('/api/payment/create-checkout', {
+    method: 'POST',
+    body: JSON.stringify(params),
+  })
+}
+
+export async function confirmPayment(stripeSessionId: string): Promise<void> {
+  await request('/api/payment/confirm', {
+    method: 'POST',
+    body: JSON.stringify({ stripe_session_id: stripeSessionId }),
+  })
+}
+
 export type RestaurantTable = {
   id: string
   tableNumber: number
@@ -194,8 +242,108 @@ export async function createTable(params: {
   })
 }
 
-export async function getAdminOrders(): Promise<OrderResponse[]> {
-  return toArray<OrderResponse>(await request<unknown>('/api/admin/orders'))
+export async function updateTableStatus(
+  tableId: string,
+  status: 'available' | 'occupied' | 'disabled'
+): Promise<RestaurantTable> {
+  return request<RestaurantTable>(`/api/tables/${tableId}`, {
+    method: 'PATCH',
+    body: JSON.stringify({ status }),
+  })
+}
+
+export type AdminOrderResponse = OrderResponse & {
+  paymentStatus?: string | null
+  restaurant?: { id: string; name: string } | null
+  total?: number
+}
+
+export async function getAdminOrders(): Promise<AdminOrderResponse[]> {
+  return toArray<AdminOrderResponse>(await request<unknown>('/api/admin/orders'))
+}
+
+export type CreateOnSiteOrderResult = { orderId: string; sessionId: string; qrPaymentUrl: string }
+
+export async function createOnSiteOrder(params: {
+  tableNumber?: number | null
+  zone?: string | null
+  sessionId?: string | null
+  guestCount?: number
+  items: Array<{ menuItemId: string; quantity: number }>
+}): Promise<CreateOnSiteOrderResult> {
+  return request<CreateOnSiteOrderResult>('/api/admin/orders/onsite', {
+    method: 'POST',
+    body: JSON.stringify(params),
+  })
+}
+
+export type AdminSession = {
+  id: string
+  tableNumber: number | null
+  guestCount: number | null
+  createdAt: string
+}
+
+export async function getAdminSessions(): Promise<AdminSession[]> {
+  return toArray<AdminSession>(await request<unknown>('/api/admin/sessions'))
+}
+
+export async function endAdminSession(sessionId: string): Promise<void> {
+  await request(`/api/admin/sessions/${sessionId}/end`, { method: 'POST' })
+}
+
+export type AdminAnalytics = {
+  totalRevenueToday: number
+  ordersToday: number
+  tablesTotal: number
+  activeTablesCount: number
+  utilizationPercent: number
+  activeSessionsToday?: number
+  completedSessionsToday?: number
+  avgSessionDurationMinutes?: number
+}
+
+export async function getAdminAnalytics(): Promise<AdminAnalytics> {
+  return request<AdminAnalytics>('/api/admin/analytics')
+}
+
+export type Reward = {
+  id: string
+  title: string
+  description?: string | null
+  restaurantId?: string | null
+  restaurant?: { id: string; name: string } | null
+}
+
+export async function getRewards(): Promise<Reward[]> {
+  return toArray<Reward>(await request<unknown>('/api/rewards'))
+}
+
+export type AdminReward = Reward & { isActive: boolean }
+
+export async function getAdminRewards(): Promise<AdminReward[]> {
+  return toArray<AdminReward>(await request<unknown>('/api/admin/rewards'))
+}
+
+export async function createAdminReward(params: {
+  title: string
+  description?: string | null
+  restaurantId?: string | null
+}): Promise<AdminReward> {
+  return request<AdminReward>('/api/admin/rewards', {
+    method: 'POST',
+    body: JSON.stringify(params),
+  })
+}
+
+export async function updateAdminReward(
+  id: string,
+  params: Partial<{ title: string; description: string | null; restaurantId: string | null; isActive: boolean }>
+): Promise<AdminReward> {
+  return request<AdminReward>(`/api/admin/rewards/${id}`, {
+    method: 'PATCH',
+    body: JSON.stringify(params),
+  })
 }
 
 // Admin restaurants

@@ -17,6 +17,7 @@ enum UserRole {
 enum TableStatus {
   available
   occupied
+  disabled
 }
 
 model User {
@@ -32,25 +33,37 @@ enum OrderStatus {
   cancelled
 }
 
+enum PaymentStatus {
+  pending
+  paid
+  failed
+}
+
 model Session {
-  id          String    @id @default(cuid())
-  userId      String
-  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  tableNumber Int?
-  guestCount  Int?
-  expiresAt   DateTime
-  createdAt   DateTime  @default(now())
-  orders      Order[]
+  id                   String    @id @default(cuid())
+  userId               String
+  user                 User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tableNumber          Int?
+  guestCount           Int?
+  expiresAt            DateTime
+  endedAt              DateTime?
+  createdAt            DateTime  @default(now())
+  seatedAt             DateTime? // when table assigned
+  paymentCompletedAt   DateTime? // when order paid
+  orders               Order[]
 }
 
 model Order {
-  id         String      @id @default(cuid())
-  sessionId  String
-  session    Session     @relation(fields: [sessionId], references: [id], onDelete: Cascade)
-  tableNumber Int?
-  status     OrderStatus @default(draft)
-  createdAt  DateTime    @default(now())
-  items      OrderItem[]
+  id                    String        @id @default(cuid())
+  sessionId             String
+  session               Session       @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  tableNumber           Int?
+  status                OrderStatus   @default(draft)
+  paymentStatus         PaymentStatus?
+  stripeCheckoutSessionId String?
+  stripePaymentIntentId String?
+  createdAt             DateTime      @default(now())
+  items                 OrderItem[]
 }
 
 model OrderItem {
@@ -77,6 +90,7 @@ model Restaurant {
   isActive  Boolean        @default(true)
   categories MenuCategory[]
   menuItems  MenuItem[]
+  rewards   Reward[]
 }
 
 model MenuCategory {
@@ -100,4 +114,13 @@ model MenuItem {
   price        Decimal      @db.Decimal(10, 2)
   isActive     Boolean      @default(true)
   orderItems   OrderItem[]
+}
+
+model Reward {
+  id           String      @id @default(cuid())
+  title        String
+  description  String?
+  restaurantId String?
+  restaurant   Restaurant?  @relation(fields: [restaurantId], references: [id], onDelete: SetNull)
+  isActive     Boolean     @default(true)
 }

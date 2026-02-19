@@ -1,34 +1,100 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
+import { Suspense, useState, useEffect, useCallback } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { PageContainer } from '@/components/guest/PageContainer'
 import { BottomBar } from '@/components/guest/BottomBar'
 import { Card } from '@/components/ui/Card'
 import { Skeleton } from '@/components/ui/Skeleton'
 import { VENUE_NAME } from '@/lib/dummy-data'
-import { getGuestSession, getGuestPrefs, getGuestQrContext, clearGuestSession } from '@/lib/session'
+import { getGuestSession, getGuestPrefs, getGuestQrContext, clearGuestSession, setGuestSessionForOnSite } from '@/lib/session'
 import {
   assignTable,
   createOrGetDraftOrder,
+  getOrderForSession,
+  getSeatingStatus,
   placeOrderApi,
+  isPaymentEnabled,
+  createPaymentCheckout,
+  confirmPayment,
   type OrderResponse,
   ApiError,
 } from '@/lib/api'
 
-export default function SeatingPage() {
+function SeatingPageInner() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const [loading, setLoading] = useState(true)
   const [table, setTable] = useState<{ tableNumber: number; zone: string | null } | null>(null)
   const [preAssigned, setPreAssigned] = useState(false)
   const [order, setOrder] = useState<OrderResponse | null>(null)
   const [placed, setPlaced] = useState(false)
+  const [paymentSuccess, setPaymentSuccess] = useState(false)
   const [placing, setPlacing] = useState(false)
   const [placeError, setPlaceError] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
+  const [paymentEnabled, setPaymentEnabled] = useState(false)
+
+  const handleRestart = useCallback(() => {
+    clearGuestSession()
+    router.replace('/guest')
+  }, [router])
 
   useEffect(() => {
+    const stripeSessionId = searchParams.get('stripe_session_id')
+    const paymentStatus = searchParams.get('payment')
+    const sessionIdFromUrl = searchParams.get('sessionId')
     const session = getGuestSession()
+
+    // Payment success: on-site (sessionId in URL) or guest menu (session in storage)
+    if (paymentStatus === 'success' && stripeSessionId) {
+      const effectiveSessionId = sessionIdFromUrl || session?.sessionId
+      if (!effectiveSessionId) {
+        setError('Invalid payment link.')
+        setLoading(false)
+        return
+      }
+      let cancelled = false
+      ;(async () => {
+        try {
+          await confirmPayment(stripeSessionId)
+          if (cancelled) return
+          if (sessionIdFromUrl) setGuestSessionForOnSite(sessionIdFromUrl)
+          const [ord, status] = await Promise.all([
+            getOrderForSession(effectiveSessionId),
+            getSeatingStatus(effectiveSessionId),
+          ])
+          if (cancelled) return
+          setOrder(ord)
+          if (status.tableNumber != null) {
+            setTable({ tableNumber: status.tableNumber, zone: status.zone })
+          }
+          setPlaced(true)
+          setPaymentSuccess(true)
+          router.replace('/guest/seating', { scroll: false })
+        } catch (e) {
+          if (!cancelled) {
+            if (e instanceof ApiError) {
+              if (e.status === 409) {
+                setError(
+                  'All tables suitable for your group are currently occupied. Please wait.'
+                )
+              } else if (e.status === 410) {
+                setError('This table is not available. Please contact staff.')
+              } else {
+                setError(e.message ?? 'Could not confirm payment. Please try again.')
+              }
+            } else {
+              setError('Could not confirm payment. Please try again.')
+            }
+          }
+        } finally {
+          if (!cancelled) setLoading(false)
+        }
+      })()
+      return () => { cancelled = true }
+    }
+
     if (!session) {
       router.replace('/guest')
       return
@@ -39,6 +105,11 @@ export default function SeatingPage() {
       router.replace('/guest/dine-in')
       return
     }
+
+    if (paymentStatus === 'cancelled') {
+      router.replace('/guest/seating', { scroll: false })
+    }
+
     const qr = getGuestQrContext()
     const isTableQr = qr?.source === 'table' && qr?.tableId != null && qr?.zoneId != null
     if (isTableQr && qr.tableId && qr.zoneId) {
@@ -46,60 +117,86 @@ export default function SeatingPage() {
       if (Number.isInteger(tableNumber)) {
         setTable({ tableNumber, zone: qr.zoneId })
         setPreAssigned(true)
-        setLoading(false)
-        return
       }
     }
-    const sessionId = session.sessionId
+
     let cancelled = false
-    async function doAssign() {
+    ;(async () => {
       try {
-        const result = await assignTable({
-          sessionId,
-          guestCount,
-        })
+        const enabled = await isPaymentEnabled()
         if (cancelled) return
-        setTable({ tableNumber: result.tableNumber, zone: result.zone })
-      } catch (e) {
-        if (cancelled) return
-        if (e instanceof ApiError) {
-          if (e.status === 404) {
-            clearGuestSession()
-            setError('Session expired. Please start again.')
-          } else if (e.status === 409) {
-            setError('No table available. Please try again shortly.')
-          } else {
-            setError(e.message ?? 'Something went wrong. Please try again.')
-          }
-        } else {
-          setError('Could not assign table. Please try again.')
+        setPaymentEnabled(enabled)
+
+        if (enabled && isTableQr) {
+          const ord = await getOrderForSession(session.sessionId)
+          if (cancelled) return
+          setOrder(ord)
+          setLoading(false)
+          return
         }
-      } finally {
+
+        if (enabled && !isTableQr && !table) {
+          const ord = await getOrderForSession(session.sessionId)
+          if (cancelled) return
+          setOrder(ord)
+          setLoading(false)
+          return
+        }
+
+        if (!enabled) {
+          const tableNum =
+            isTableQr && qr?.tableId ? parseInt(qr.tableId, 10) : undefined
+          const result = await assignTable({
+            sessionId: session.sessionId,
+            guestCount: guestCount ?? 2,
+            optionalTableNumber: Number.isInteger(tableNum) ? tableNum : undefined,
+            optionalZone: isTableQr ? qr?.zoneId ?? undefined : undefined,
+          })
+          if (cancelled) return
+          setTable({ tableNumber: result.tableNumber, zone: result.zone })
+        }
+
+        const ord = !enabled ? await createOrGetDraftOrder(session.sessionId) : await getOrderForSession(session.sessionId)
+        if (cancelled) return
+        setOrder(ord)
+        } catch (e) {
+          if (!cancelled) {
+            if (e instanceof ApiError) {
+              if (e.status === 404) {
+                clearGuestSession()
+                setError('Session expired. Please start again.')
+              } else if (e.status === 409) {
+                setError(
+                  'All tables suitable for your group are currently occupied. Please wait.'
+                )
+              } else if (e.status === 410) {
+                setError('This table is not available. Please contact staff.')
+              } else {
+                setError(e.message ?? 'Something went wrong. Please try again.')
+              }
+            } else {
+              setError('Could not load. Please try again.')
+            }
+          }
+        } finally {
         if (!cancelled) setLoading(false)
       }
-    }
-    doAssign()
+    })()
     return () => { cancelled = true }
-  }, [router])
+  }, [router, searchParams])
 
   useEffect(() => {
-    if (!table) return
+    if (!paymentEnabled && !table) return
     const session = getGuestSession()
     if (!session) return
-    const sessionId = session.sessionId
+    if (order && order.status === 'placed') return
     let cancelled = false
-    async function fetchDraft() {
-      try {
-        const draft = await createOrGetDraftOrder(sessionId)
-        if (cancelled) return
-        setOrder(draft)
-      } catch {
-        if (!cancelled) setOrder(null)
-      }
-    }
-    fetchDraft()
+    ;(async () => {
+      const ord = await getOrderForSession(session.sessionId)
+      if (!cancelled && ord) setOrder(ord)
+    })()
     return () => { cancelled = true }
-  }, [table])
+  }, [table, paymentEnabled, order?.status])
 
   const handlePlaceOrder = async () => {
     const session = getGuestSession()
@@ -119,9 +216,31 @@ export default function SeatingPage() {
     }
   }
 
-  const handleRestart = () => {
-    clearGuestSession()
-    router.replace('/guest')
+  const handlePayNow = async () => {
+    const session = getGuestSession()
+    const prefs = getGuestPrefs()
+    const guestCount = prefs?.guestCount ?? 2
+    const qr = getGuestQrContext()
+    const isTableQr = qr?.source === 'table' && qr?.tableId != null && qr?.zoneId != null
+    const tableNum = isTableQr && qr?.tableId ? parseInt(qr.tableId, 10) : undefined
+    const zone = qr?.source === 'table' && qr?.zoneId ? qr.zoneId : null
+    if (!session || !order || (order.items?.length ?? 0) === 0) return
+    setPlacing(true)
+    setPlaceError(null)
+    try {
+      const { checkoutUrl } = await createPaymentCheckout({
+        orderId: order.id,
+        sessionId: session.sessionId,
+        guestCount,
+        zone,
+        optionalTableNumber: Number.isInteger(tableNum) ? tableNum : undefined,
+        optionalZone: isTableQr ? qr?.zoneId ?? undefined : undefined,
+      })
+      window.location.href = checkoutUrl
+    } catch (e) {
+      setPlaceError(e instanceof ApiError ? e.message : 'Unable to start payment.')
+      setPlacing(false)
+    }
   }
 
   if (loading) {
@@ -147,17 +266,18 @@ export default function SeatingPage() {
   }
 
   const orderItems = order && Array.isArray(order.items) ? order.items : []
-  const canPlace = order && orderItems.length > 0 && !placed
+  const canPlace = order && orderItems.length > 0 && !placed && !paymentEnabled
+  const canPay = order && orderItems.length > 0 && !placed && paymentEnabled
 
   return (
     <>
       <PageContainer title="Your table" subtitle={VENUE_NAME}>
         <Card className="p-10 text-center">
           <p className="text-4xl font-bold tracking-tight text-venue-primary sm:text-5xl">
-            Table {table?.zone ? `${table.zone}-` : ''}{table?.tableNumber}
+            {table ? `Table ${table.zone ? `${table.zone}-` : ''}${table.tableNumber}` : '—'}
           </p>
           <p className="mt-3 text-venue-muted">
-            {preAssigned ? 'Pre-assigned (scanned at table).' : 'Your table has been assigned.'}
+            {paymentSuccess ? 'Payment successful.' : preAssigned ? 'Pre-assigned via table QR.' : table ? 'Your table has been assigned.' : 'Complete payment to receive your table.'}
           </p>
         </Card>
         {canPlace && (
@@ -175,9 +295,24 @@ export default function SeatingPage() {
             )}
           </div>
         )}
+        {canPay && (
+          <div className="mt-8">
+            <button
+              type="button"
+              disabled={placing}
+              onClick={handlePayNow}
+              className="btn-primary w-full py-4 disabled:opacity-50"
+            >
+              {placing ? 'Redirecting…' : 'Pay now'}
+            </button>
+            {placeError && (
+              <p className="mt-3 text-sm text-red-600">{placeError}</p>
+            )}
+          </div>
+        )}
         {placed && (
           <p className="mt-8 text-center text-lg font-semibold text-venue-primary">
-            Order placed
+            {paymentSuccess ? 'Payment successful' : 'Order placed'}
           </p>
         )}
       </PageContainer>
@@ -187,5 +322,19 @@ export default function SeatingPage() {
         nextLabel={placed ? 'Proceed to rewards' : undefined}
       />
     </>
+  )
+}
+
+export default function SeatingPage() {
+  return (
+    <Suspense fallback={
+      <PageContainer title="Your table" subtitle={VENUE_NAME}>
+        <Card className="p-8 text-center">
+          <Skeleton lines={3} />
+        </Card>
+      </PageContainer>
+    }>
+      <SeatingPageInner />
+    </Suspense>
   )
 }

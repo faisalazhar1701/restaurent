@@ -46,6 +46,12 @@ export default function CartPage() {
         const draft = await createOrGetDraftOrder(sessionId)
         if (cancelled) return
         setOrder(draft)
+        const items = draft?.items ?? []
+        const itemCount = items.reduce((s, i) => s + (i.quantity ?? 0), 0)
+        if (draft?.status === 'draft' && itemCount === 0) {
+          router.replace('/guest/menu')
+          return
+        }
       } catch (e) {
         if (cancelled) return
         if (e instanceof ApiError && e.status === 404) {

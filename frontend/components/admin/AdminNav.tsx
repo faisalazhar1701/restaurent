@@ -14,6 +14,7 @@ export function AdminNav() {
     { href: '/admin/seating', label: 'Seating' },
     { href: '/admin/tables', label: 'Tables' },
     { href: '/admin/orders', label: 'Orders' },
+    { href: '/admin/rewards', label: 'Rewards' },
     { href: '/admin/analytics', label: 'Analytics' },
   ]
 

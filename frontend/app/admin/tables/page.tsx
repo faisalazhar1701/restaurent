@@ -6,7 +6,8 @@ import { Card } from '@/components/ui/Card'
 import { Badge } from '@/components/ui/Badge'
 import { Skeleton } from '@/components/ui/Skeleton'
 import { EmptyState } from '@/components/ui/EmptyState'
-import { getTables, createTable, type RestaurantTable, ApiError } from '@/lib/api'
+import { TableQrModal } from '@/components/guest/TableQrModal'
+import { getTables, createTable, updateTableStatus, type RestaurantTable, ApiError } from '@/lib/api'
 
 export default function AdminTablesPage() {
   const [tables, setTables] = useState<RestaurantTable[]>([])
@@ -17,6 +18,8 @@ export default function AdminTablesPage() {
   const [addCapacity, setAddCapacity] = useState('4')
   const [adding, setAdding] = useState(false)
   const [addError, setAddError] = useState<string | null>(null)
+  const [qrTable, setQrTable] = useState<RestaurantTable | null>(null)
+  const [updatingId, setUpdatingId] = useState<string | null>(null)
 
   const refreshTables = async () => {
     try {
@@ -181,16 +184,92 @@ export default function AdminTablesPage() {
                 <p className="font-semibold text-venue-primary">
                   {t.zone ? `${t.zone}-${t.tableNumber}` : `Table ${t.tableNumber}`}
                 </p>
-                <Badge variant={t.status === 'available' ? 'available' : 'occupied'}>
-                  {t.status === 'available' ? 'Available' : 'Occupied'}
+                <Badge
+                  variant={
+                    t.status === 'available'
+                      ? 'available'
+                      : t.status === 'disabled'
+                        ? 'disabled'
+                        : 'occupied'
+                  }
+                >
+                  {t.status === 'available'
+                    ? 'Available'
+                    : t.status === 'disabled'
+                      ? 'Disabled'
+                      : 'Occupied'}
                 </Badge>
               </div>
               <p className="mt-2 text-sm text-venue-muted">
                 Capacity {t.capacity ?? 4}
               </p>
+              <div className="mt-4 flex flex-wrap items-center gap-2">
+                <button
+                  type="button"
+                  disabled={updatingId === t.id || t.status === 'occupied'}
+                  onClick={async () => {
+                    if (t.status === 'available') {
+                      setUpdatingId(t.id)
+                      try {
+                        await updateTableStatus(t.id, 'disabled')
+                        await refreshTables()
+                      } catch {
+                        // ignore
+                      } finally {
+                        setUpdatingId(null)
+                      }
+                    }
+                  }}
+                  className="btn-secondary text-sm disabled:opacity-50"
+                >
+                  {updatingId === t.id ? '…' : 'Disable'}
+                </button>
+                <button
+                  type="button"
+                  disabled={updatingId === t.id || t.status === 'available'}
+                  onClick={async () => {
+                    if (t.status === 'disabled' || t.status === 'occupied') {
+                      setUpdatingId(t.id)
+                      try {
+                        await updateTableStatus(t.id, 'available')
+                        await refreshTables()
+                      } catch {
+                        // ignore
+                      } finally {
+                        setUpdatingId(null)
+                      }
+                    }
+                  }}
+                  className="btn-secondary text-sm disabled:opacity-50"
+                >
+                  {updatingId === t.id ? '…' : 'Enable'}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setQrTable(t)}
+                  className="btn-secondary text-sm"
+                >
+                  View QR
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setQrTable(t)}
+                  className="btn-secondary text-sm"
+                >
+                  Download QR
+                </button>
+              </div>
             </Card>
           ))}
         </div>
+      )}
+
+      {qrTable && (
+        <TableQrModal
+          tableNumber={qrTable.tableNumber}
+          zone={qrTable.zone}
+          onClose={() => setQrTable(null)}
+        />
       )}
     </div>
   )

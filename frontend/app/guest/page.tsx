@@ -13,9 +13,16 @@ function GuestEntryPageInner() {
   const [error, setError] = useState<string | null>(null)
   const apiConfigured = getApiBaseUrlOrNull() != null
 
+  const params = parseGuestQrParams(searchParams)
+  const ctx = paramsToQrContext(params)
+  const isTableQr = ctx.source === 'table' && ctx.tableId != null
+  const tableScanLabel = isTableQr && ctx.tableId
+    ? ctx.zoneId
+      ? `You scanned Table ${ctx.zoneId}-${ctx.tableId}`
+      : `You scanned Table ${ctx.tableId}`
+    : null
+
   useEffect(() => {
-    const params = parseGuestQrParams(searchParams)
-    const ctx = paramsToQrContext(params)
     setGuestQrContext(ctx)
   }, [searchParams])
 
@@ -26,13 +33,7 @@ function GuestEntryPageInner() {
       const params = parseGuestQrParams(searchParams)
       const ctx = paramsToQrContext(params)
       setGuestQrContext(ctx)
-      const tableNumber =
-        ctx.source === 'table' && ctx.tableId
-          ? parseInt(ctx.tableId, 10)
-          : undefined
-      const data = await createGuestSession(
-        Number.isInteger(tableNumber) ? { tableNumber } : undefined
-      )
+      const data = await createGuestSession()
       const token = data?.token
       const sessionId = data?.session?.id
       if (typeof token !== 'string' || typeof sessionId !== 'string') {
@@ -59,6 +60,11 @@ function GuestEntryPageInner() {
     <main className="flex min-h-screen flex-1 flex-col bg-venue-primary">
       <div className="flex flex-1 flex-col items-center justify-center px-6 py-16">
         <div className="mx-auto max-w-sm text-center">
+          {tableScanLabel && (
+            <p className="mb-4 rounded-lg bg-white/15 px-4 py-2 text-sm font-medium text-white">
+              {tableScanLabel}
+            </p>
+          )}
           <p className="text-xs font-medium uppercase tracking-wider text-white/70 sm:text-sm">
             Welcome to
           </p>

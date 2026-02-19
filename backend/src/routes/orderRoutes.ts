@@ -1,6 +1,7 @@
 import { Router, type Request, type Response, type NextFunction } from 'express';
 import {
   createOrGetDraft,
+  getOrderForSession,
   addOrUpdateItem,
   removeItem,
   placeOrder,
@@ -67,6 +68,23 @@ router.delete('/items/:id', async (req: Request, res: Response, next: NextFuncti
   }
 });
 
+/** GET /api/orders/for-session?sessionId= — get order (draft or placed) for session */
+router.get('/for-session', async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const sessionId = req.query.sessionId as string | undefined;
+    if (!sessionId) {
+      return res.status(400).json({ error: 'sessionId is required' });
+    }
+    const order = await getOrderForSession(sessionId);
+    if (!order) {
+      return res.status(404).json({ error: 'No order found' });
+    }
+    res.json(formatOrder(order));
+  } catch (e) {
+    next(e);
+  }
+});
+
 /** POST /api/orders/place — place order */
 router.post('/place', async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -100,6 +118,7 @@ function formatOrder(order: {
   sessionId: string;
   tableNumber: number | null;
   status: string;
+  paymentStatus?: string | null;
   createdAt: Date;
   items: Array<{ id: string; quantity: number; priceAtOrder: unknown; menuItem: { id: string; name: string; price: unknown } }>;
 }) {
@@ -108,6 +127,7 @@ function formatOrder(order: {
     sessionId: order.sessionId,
     tableNumber: order.tableNumber,
     status: order.status,
+    paymentStatus: order.paymentStatus ?? null,
     createdAt: order.createdAt,
     items: order.items.map(formatOrderItem),
   };

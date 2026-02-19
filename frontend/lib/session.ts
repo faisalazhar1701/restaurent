@@ -45,6 +45,13 @@ export function setGuestSession(token: string, sessionId: string): void {
   localStorage.setItem(GUEST_SESSION_ID_KEY, sessionId)
 }
 
+/** Store session for on-site QR payment flow (guest has no token, sessionId from URL) */
+export function setGuestSessionForOnSite(sessionId: string): void {
+  if (typeof window === 'undefined') return
+  localStorage.setItem(GUEST_TOKEN_KEY, 'onsite')
+  localStorage.setItem(GUEST_SESSION_ID_KEY, sessionId)
+}
+
 export function clearGuestSession(): void {
   if (typeof window === 'undefined') return
   localStorage.removeItem(GUEST_TOKEN_KEY)

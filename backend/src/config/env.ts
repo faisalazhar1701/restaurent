@@ -22,4 +22,7 @@ export const env = {
   JWT_EXPIRES_IN: optional('JWT_EXPIRES_IN', '7d'),
   ADMIN_EMAIL: optional('ADMIN_EMAIL', 'admin@example.com'),
   ADMIN_PASSWORD: optional('ADMIN_PASSWORD', 'replace_me'),
+  STRIPE_SECRET_KEY: optional('STRIPE_SECRET_KEY', ''),
+  STRIPE_WEBHOOK_SECRET: optional('STRIPE_WEBHOOK_SECRET', ''),
+  FRONTEND_URL: optional('FRONTEND_URL', 'http://localhost:3000'),
 } as const;
