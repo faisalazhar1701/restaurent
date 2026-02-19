@@ -63,8 +63,11 @@ export async function assignTableToSession(params: {
       };
   }
 
+  // Require valid guestCount; no fallback to avoid assigning undersized tables
   const minCapacity =
-    guestCount != null && guestCount >= 1 && guestCount <= 10 ? guestCount : 1;
+    guestCount != null && Number.isInteger(guestCount) && guestCount >= 1 && guestCount <= 10
+      ? guestCount
+      : 1;
 
   // Table QR: request specific table
   if (
@@ -147,7 +150,9 @@ export async function assignTableToSession(params: {
     if (!table)
       throw new AppError(
         409,
-        'All tables suitable for your group are currently occupied. Please wait.'
+        'All tables are currently occupied. Please wait.',
+        true,
+        'NO_TABLE_AVAILABLE'
       );
 
     await tx.restaurantTable.update({

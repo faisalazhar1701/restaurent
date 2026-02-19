@@ -5,7 +5,8 @@ export class AppError extends Error {
   constructor(
     public statusCode: number,
     message: string,
-    public isOperational = true
+    public isOperational = true,
+    public code?: string
   ) {
     super(message);
     Object.setPrototypeOf(this, AppError.prototype);
@@ -46,7 +47,9 @@ export function errorHandler(
   _next: NextFunction
 ): void {
   if (err instanceof AppError) {
-    res.status(err.statusCode).json({ error: err.message });
+    const payload: { error: string; code?: string } = { error: err.message };
+    if (err.code) payload.code = err.code;
+    res.status(err.statusCode).json(payload);
     return;
   }
   if (err instanceof Prisma.PrismaClientKnownRequestError) {

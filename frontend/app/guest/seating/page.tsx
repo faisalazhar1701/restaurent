@@ -75,10 +75,8 @@ function SeatingPageInner() {
         } catch (e) {
           if (!cancelled) {
             if (e instanceof ApiError) {
-              if (e.status === 409) {
-                setError(
-                  'All tables suitable for your group are currently occupied. Please wait.'
-                )
+              if (e.status === 409 || (e.body as { code?: string })?.code === 'NO_TABLE_AVAILABLE') {
+                setError('All tables are currently occupied. Please wait for availability.')
               } else if (e.status === 410) {
                 setError('This table is not available. Please contact staff.')
               } else {
@@ -165,10 +163,8 @@ function SeatingPageInner() {
               if (e.status === 404) {
                 clearGuestSession()
                 setError('Session expired. Please start again.')
-              } else if (e.status === 409) {
-                setError(
-                  'All tables suitable for your group are currently occupied. Please wait.'
-                )
+              } else if (e.status === 409 || (e.body as { code?: string })?.code === 'NO_TABLE_AVAILABLE') {
+                setError('All tables are currently occupied. Please wait for availability.')
               } else if (e.status === 410) {
                 setError('This table is not available. Please contact staff.')
               } else {
