@@ -62,10 +62,10 @@ export default function AdminOrdersPage() {
     return (
       <div className="mx-auto max-w-5xl">
         <header className="mb-10">
-          <h1 className="text-2xl font-semibold tracking-tight text-venue-foreground sm:text-3xl">
+          <h1 className="text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl">
             Orders
           </h1>
-          <p className="mt-1 text-sm text-venue-muted">Loading…</p>
+          <p className="mt-1 text-sm text-slate-500">Loading…</p>
         </header>
         <Skeleton lines={6} />
       </div>
@@ -76,11 +76,11 @@ export default function AdminOrdersPage() {
     return (
       <div className="mx-auto max-w-5xl">
         <header className="mb-10">
-          <h1 className="text-2xl font-semibold tracking-tight text-venue-foreground sm:text-3xl">
+          <h1 className="text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl">
             Orders
           </h1>
         </header>
-        <p className="text-red-600">{error}</p>
+        <p className="text-venue-danger">{error}</p>
       </div>
     )
   }
@@ -97,10 +97,10 @@ export default function AdminOrdersPage() {
   return (
     <div className="mx-auto max-w-5xl">
       <header className="mb-10">
-        <h1 className="text-2xl font-semibold tracking-tight text-venue-foreground sm:text-3xl">
+        <h1 className="text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl">
           Orders
         </h1>
-        <p className="mt-1 text-sm text-venue-muted">Placed orders from guests</p>
+        <p className="mt-1 text-sm text-slate-500">Placed orders from guests</p>
         <div className="mt-4 flex flex-wrap gap-3">
           <select
             value={filterRestaurant}
@@ -128,7 +128,7 @@ export default function AdminOrdersPage() {
         <button
           type="button"
           onClick={() => setShowOnSite(!showOnSite)}
-          className="text-lg font-semibold text-venue-foreground hover:underline"
+          className="text-lg font-semibold text-slate-900 hover:underline"
         >
           {showOnSite ? '−' : '+'} Create on-site order (QR payment)
         </button>
@@ -136,7 +136,7 @@ export default function AdminOrdersPage() {
           <div className="mt-6 space-y-4">
             <div className="flex flex-wrap gap-4">
               <div>
-                <label className="mb-1 block text-sm font-medium text-venue-foreground">Table number</label>
+                <label className="mb-1 block text-sm font-medium text-slate-900">Table number</label>
                 <input
                   type="number"
                   min={1}
@@ -147,7 +147,7 @@ export default function AdminOrdersPage() {
                 />
               </div>
               <div>
-                <label className="mb-1 block text-sm font-medium text-venue-foreground">Zone (optional)</label>
+                <label className="mb-1 block text-sm font-medium text-slate-900">Zone (optional)</label>
                 <input
                   type="text"
                   value={onSiteZone}
@@ -157,7 +157,7 @@ export default function AdminOrdersPage() {
                 />
               </div>
               <div>
-                <label className="mb-1 block text-sm font-medium text-venue-foreground">Guest count</label>
+                <label className="mb-1 block text-sm font-medium text-slate-900">Guest count</label>
                 <input
                   type="number"
                   min={1}
@@ -169,7 +169,7 @@ export default function AdminOrdersPage() {
               </div>
             </div>
             <div>
-              <label className="mb-1 block text-sm font-medium text-venue-foreground">Add items</label>
+              <label className="mb-1 block text-sm font-medium text-slate-900">Add items</label>
               <div className="flex flex-wrap gap-2">
                 <select
                   id="onsite-item"
@@ -190,14 +190,14 @@ export default function AdminOrdersPage() {
                   ))}
                 </select>
               </div>
-              <ul className="mt-2 space-y-1 text-sm text-venue-muted">
+              <ul className="mt-2 space-y-1 text-sm text-slate-500">
                 {onSiteItems.map((line, i) => (
                   <li key={i} className="flex items-center gap-2">
                     {line.name} × {line.quantity}
                     <button
                       type="button"
                       onClick={() => setOnSiteItems((prev) => prev.filter((_, j) => j !== i))}
-                      className="text-red-600 hover:underline"
+                      className="text-venue-danger hover:underline"
                     >
                       Remove
                     </button>
@@ -219,11 +219,11 @@ export default function AdminOrdersPage() {
             </div>
             {onSiteQrUrl && (
               <div className="rounded-lg border border-venue-border bg-venue-surface p-4">
-                <p className="font-medium text-venue-foreground">QR payment link created</p>
-                <a href={onSiteQrUrl} target="_blank" rel="noopener noreferrer" className="mt-2 block break-all text-sm text-venue-foreground hover:underline">
+                <p className="font-medium text-slate-900">QR payment link created</p>
+                <a href={onSiteQrUrl} target="_blank" rel="noopener noreferrer" className="mt-2 block break-all text-sm text-slate-900 hover:underline">
                   {onSiteQrUrl}
                 </a>
-                <p className="mt-2 text-xs text-venue-muted">Guest scans QR or opens link → pays → seating + rewards</p>
+                <p className="mt-2 text-xs text-slate-500">Guest scans QR or opens link → pays → seating + rewards</p>
               </div>
             )}
             <button
@@ -275,10 +275,10 @@ export default function AdminOrdersPage() {
               <Card key={order.id} className="p-6 transition-shadow hover:shadow-card-hover">
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div>
-                    <p className="font-semibold text-venue-foreground">
+                    <p className="font-semibold text-slate-900">
                       Order {order.id.slice(0, 8)} · Table {order.tableNumber ?? '—'}
                     </p>
-                    <p className="mt-0.5 text-sm text-venue-muted">
+                    <p className="mt-0.5 text-sm text-slate-500">
                       {createdAt}
                       {order.restaurant && ` · ${order.restaurant.name}`}
                     </p>
@@ -292,7 +292,7 @@ export default function AdminOrdersPage() {
                     </Badge>
                   </div>
                 </div>
-                <ul className="mt-4 space-y-1.5 border-t border-venue-border pt-4 text-sm text-venue-muted">
+                <ul className="mt-4 space-y-1.5 border-t border-venue-border pt-4 text-sm text-slate-500">
                   {items.map((i) => (
                     <li key={i.id}>
                       {i.menuItemName} × {i.quantity} — $
@@ -300,7 +300,7 @@ export default function AdminOrdersPage() {
                     </li>
                   ))}
                 </ul>
-                <p className="mt-4 font-semibold text-venue-foreground">
+                <p className="mt-4 font-semibold text-slate-900">
                   Total: ${(order.total ?? total).toFixed(2)}
                 </p>
               </Card>

@@ -8,18 +8,19 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        // Modern mall/food-court palette — soft neutrals, blue primary
-        "venue-primary": "#2563EB",
-        "venue-foreground": "#111827",
-        "venue-muted": "#6B7280",
-        "venue-surface": "#F9FAFB",
-        "venue-border": "#E5E7EB",
-        "venue-success": "#16A34A",
+        // Premium B2B SaaS palette — slate-900 primary, blue accent
+        "venue-primary": "#0F172A",
+        "venue-foreground": "#0F172A",
+        "venue-accent": "#2563EB",
+        "venue-muted": "#64748B",
+        "venue-surface": "#F8FAFC",
+        "venue-border": "#E2E8F0",
+        "venue-success": "#22C55E",
         "venue-warning": "#F59E0B",
-        "venue-danger": "#DC2626",
+        "venue-danger": "#EF4444",
       },
       fontFamily: {
-        sans: ["system-ui", "-apple-system", "BlinkMacSystemFont", "Segoe UI", "sans-serif"],
+        sans: ["Inter", "system-ui", "-apple-system", "BlinkMacSystemFont", "Segoe UI", "sans-serif"],
       },
       boxShadow: {
         "card": "0 1px 3px 0 rgb(0 0 0 / 0.05), 0 1px 2px -1px rgb(0 0 0 / 0.05)",

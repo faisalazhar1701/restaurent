@@ -31,8 +31,8 @@ export default function PeoplePage() {
                 onClick={() => handleSelect(n)}
                 className="w-full"
               >
-                <span className="text-xl font-semibold text-venue-foreground">{n}</span>
-                <p className="mt-1 text-sm text-venue-muted">
+                <span className="text-xl font-semibold text-slate-900">{n}</span>
+                <p className="mt-1 text-sm text-slate-500">
                   {n === 1 ? 'guest' : 'guests'}
                 </p>
               </button>

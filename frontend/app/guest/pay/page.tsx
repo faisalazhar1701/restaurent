@@ -39,7 +39,7 @@ function GuestPayPageInner() {
   if (error) {
     return (
       <PageContainer title="Payment" subtitle={VENUE_NAME}>
-        <p className="text-sm text-red-600">{error}</p>
+        <p className="text-sm text-venue-danger">{error}</p>
       </PageContainer>
     )
   }
@@ -48,7 +48,7 @@ function GuestPayPageInner() {
     <PageContainer title="Payment" subtitle={VENUE_NAME}>
       <div className="p-8 text-center">
         <Skeleton lines={3} />
-        <p className="mt-4 text-sm text-venue-muted">Redirecting to payment…</p>
+        <p className="mt-4 text-sm text-slate-500">Redirecting to payment…</p>
       </div>
     </PageContainer>
   )

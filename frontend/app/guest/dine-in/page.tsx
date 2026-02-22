@@ -23,17 +23,17 @@ export default function DineInPage() {
   return (
     <>
       <PageContainer title="Party size" subtitle={VENUE_NAME}>
-        <p className="mb-6 text-sm text-venue-muted">How many people are dining? We&apos;ll find a suitable table.</p>
+        <p className="mb-6 text-sm text-slate-500">How many people are dining? We&apos;ll find a suitable table.</p>
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
           {GUEST_COUNTS.map((n) => (
-            <Card key={n} className="p-6 text-center transition-shadow hover:shadow-card-hover">
+            <Card key={n} className="p-6 text-center transition-all hover:shadow-md">
               <button
                 type="button"
                 onClick={() => handleSelect(n)}
-                className="w-full"
+                className="flex h-full min-h-[80px] w-full flex-col items-center justify-center"
               >
-                <span className="text-xl font-semibold text-venue-foreground">{n}</span>
-                <p className="mt-1 text-sm text-venue-muted">
+                <span className="text-xl font-semibold text-slate-900">{n}</span>
+                <p className="mt-1 text-sm text-slate-500">
                   {n === 1 ? 'guest' : 'guests'}
                 </p>
               </button>

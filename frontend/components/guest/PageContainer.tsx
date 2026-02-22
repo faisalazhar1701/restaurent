@@ -15,13 +15,13 @@ export function PageContainer({
   children: ReactNode
 }) {
   return (
-    <div className="flex flex-1 flex-col px-4 pb-6 pt-6 sm:px-6">
+    <div className="flex flex-1 flex-col px-4 pb-8 pt-6 sm:px-6">
       <header className="mb-8">
-        <h1 className="text-2xl font-semibold tracking-tight text-venue-foreground sm:text-3xl">
+        <h1 className="text-2xl font-semibold tracking-tight text-slate-900">
           {title}
         </h1>
         {subtitle && (
-          <p className="mt-1 text-sm text-gray-500">{subtitle}</p>
+          <p className="mt-1 text-xs text-slate-500">{subtitle}</p>
         )}
       </header>
       <div className="flex-1">{children}</div>

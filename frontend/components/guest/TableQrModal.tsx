@@ -43,13 +43,13 @@ export function TableQrModal({ tableNumber, zone, onClose }: TableQrModalProps) 
     >
       <div className="max-h-[90vh] w-full max-w-sm overflow-auto rounded-xl bg-white p-6 shadow-xl">
         <div className="mb-4 flex items-center justify-between">
-          <h2 id="qr-modal-title" className="text-lg font-semibold text-venue-foreground">
+          <h2 id="qr-modal-title" className="text-lg font-semibold text-slate-900">
             Table {zone ? `${zone}-` : ''}{tableNumber} QR
           </h2>
           <button
             type="button"
             onClick={onClose}
-            className="rounded p-1 text-venue-muted hover:bg-venue-surface hover:text-venue-foreground"
+            className="rounded p-1 text-slate-500 hover:bg-slate-100 hover:text-slate-900"
             aria-label="Close"
           >
             ×
@@ -63,7 +63,7 @@ export function TableQrModal({ tableNumber, zone, onClose }: TableQrModalProps) 
             <canvas ref={canvasRef} width={256} height={256} className="bg-white" />
           )}
         </div>
-        <p className="mb-4 break-all text-center text-xs text-venue-muted">{qrUrl}</p>
+        <p className="mb-4 break-all text-center text-xs text-slate-500">{qrUrl}</p>
         <div className="flex gap-3">
           <button type="button" onClick={handleDownload} disabled={!dataUrl} className="btn-primary flex-1 disabled:opacity-50">
             Download QR

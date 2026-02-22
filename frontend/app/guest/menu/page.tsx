@@ -112,7 +112,7 @@ function MenuPageInner() {
   if (error && !safeCategories.length) {
     return (
       <PageContainer title="Menu" subtitle={VENUE_NAME}>
-        <p className="text-sm text-red-600">{error}</p>
+        <p className="text-sm text-venue-danger">{error}</p>
         <BottomBar backHref="/guest" />
       </PageContainer>
     )
@@ -123,16 +123,16 @@ function MenuPageInner() {
       <PageContainer title="Menu" subtitle={VENUE_NAME}>
         <StepIndicator current="menu" />
         {emptyCartMessage && (
-          <p className="mb-4 rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-600">
-            Your cart is empty. Add items below to continue.
-          </p>
+          <div className="mb-6 rounded-2xl border border-slate-200 bg-slate-50 px-5 py-4">
+            <p className="text-sm text-slate-600">Your cart is empty. Add items below to continue.</p>
+          </div>
         )}
         <Link
           href="/guest/cart"
-          className="mb-8 flex min-h-[52px] items-center justify-between rounded-xl border border-gray-200 bg-white px-5 py-4 shadow-sm transition-shadow hover:shadow-md"
+          className="mb-8 flex min-h-[56px] items-center justify-between rounded-2xl border border-slate-200 bg-white px-6 py-4 shadow-sm transition-all hover:shadow-md"
         >
-          <span className="font-medium text-venue-foreground">Cart</span>
-          <span className="font-semibold text-venue-foreground">{cartCount} {cartCount === 1 ? 'item' : 'items'}</span>
+          <span className="font-medium text-slate-900">Cart</span>
+          <span className="text-lg font-bold text-slate-900">{cartCount} {cartCount === 1 ? 'item' : 'items'}</span>
         </Link>
         <div className="-mx-1 mb-8 flex gap-2 overflow-x-auto pb-2">
           {safeCategories.map((cat) => (
@@ -140,10 +140,10 @@ function MenuPageInner() {
               key={cat.id}
               type="button"
               onClick={() => setActiveCategory(cat.id)}
-              className={`min-h-[44px] shrink-0 rounded-full px-5 py-2.5 text-sm font-medium transition-colors ${
+              className={`h-12 shrink-0 rounded-full px-5 text-sm font-medium transition-all ${
                 activeCategory === cat.id
-                  ? 'bg-venue-primary text-white'
-                  : 'border border-gray-200 bg-white text-venue-muted hover:border-venue-primary/40 hover:text-venue-foreground'
+                  ? 'bg-venue-primary text-white shadow-md'
+                  : 'border border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:text-slate-900'
               }`}
             >
               {cat.name}
@@ -160,13 +160,13 @@ function MenuPageInner() {
             <EmptyState title="No items in this category" description="Select another category." />
           ) : (
             filteredItems.map((item) => (
-              <Card key={item.id} className="flex flex-row items-center gap-4 p-5 transition-shadow hover:shadow-md">
+              <Card key={item.id} className="flex flex-row items-center justify-between gap-6 p-6 transition-all hover:shadow-md">
                 <div className="min-w-0 flex-1">
-                  <h3 className="text-base font-semibold text-venue-foreground">{item.name}</h3>
+                  <h3 className="text-base font-semibold text-slate-900">{item.name}</h3>
                   {item.description && (
-                    <p className="mt-0.5 text-sm text-gray-500">{item.description}</p>
+                    <p className="mt-1 text-sm text-slate-500">{item.description}</p>
                   )}
-                  <p className="mt-2 text-lg font-bold text-venue-foreground">
+                  <p className="mt-3 text-right text-xl font-bold text-slate-900">
                     ${Number(item.price).toFixed(2)}
                   </p>
                 </div>
@@ -174,7 +174,7 @@ function MenuPageInner() {
                   type="button"
                   disabled={!!addingId || order?.status !== 'draft'}
                   onClick={() => handleAddToCart(item)}
-                  className="btn-primary min-h-[44px] shrink-0 px-5 py-2.5 disabled:opacity-50"
+                  className="btn-primary h-12 shrink-0 px-6 disabled:opacity-50"
                 >
                   {addingId === item.id ? 'Adding…' : 'Add'}
                 </button>

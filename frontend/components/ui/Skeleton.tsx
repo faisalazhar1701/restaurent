@@ -17,7 +17,7 @@ export function Skeleton({
       {Array.from({ length: lines }).map((_, i) => (
         <div
           key={i}
-          className="h-4 rounded-lg bg-venue-border/80"
+          className="h-4 rounded-lg bg-slate-200/80"
           style={{ width: i === lines - 1 && lines > 1 ? '75%' : '100%' }}
         />
       ))}

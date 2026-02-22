@@ -222,10 +222,10 @@ export default function AdminProductsPage() {
     return (
       <div className="mx-auto max-w-5xl">
         <header className="mb-10">
-          <h1 className="text-2xl font-semibold tracking-tight text-venue-foreground sm:text-3xl">
+          <h1 className="text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl">
             Products
           </h1>
-          <p className="mt-1 text-sm text-venue-muted">Loading…</p>
+          <p className="mt-1 text-sm text-slate-500">Loading…</p>
         </header>
         <Skeleton lines={6} />
       </div>
@@ -235,14 +235,14 @@ export default function AdminProductsPage() {
   return (
     <div className="mx-auto max-w-5xl">
       <header className="mb-10">
-        <h1 className="text-2xl font-semibold tracking-tight text-venue-foreground sm:text-3xl">
+        <h1 className="text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl">
           Products
         </h1>
-        <p className="mt-1 text-sm text-venue-muted">
+        <p className="mt-1 text-sm text-slate-500">
           Manage menu categories and items
         </p>
         <div className="mt-4">
-          <label htmlFor="restaurant-select" className="mb-1 block text-sm font-medium text-venue-foreground">
+          <label htmlFor="restaurant-select" className="mb-1 block text-sm font-medium text-slate-900">
             Restaurant
           </label>
           <select
@@ -260,17 +260,17 @@ export default function AdminProductsPage() {
       </header>
 
       {error && (
-        <p className="mb-6 text-sm text-red-600">{error}</p>
+        <p className="mb-6 text-sm text-venue-danger">{error}</p>
       )}
 
       {selectedRestaurantId === '' && (
-        <p className="mb-6 text-sm text-venue-muted">Select a restaurant to manage its categories and products.</p>
+        <p className="mb-6 text-sm text-slate-500">Select a restaurant to manage its categories and products.</p>
       )}
 
       {/* Categories */}
       <section className="mb-10">
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-venue-foreground">Categories</h2>
+          <h2 className="text-lg font-semibold text-slate-900">Categories</h2>
           <button
             disabled={!selectedRestaurantId}
             type="button"
@@ -331,19 +331,19 @@ export default function AdminProductsPage() {
             {categories.map((c) => (
               <div
                 key={c.id}
-                className="flex items-center gap-2 rounded-xl border border-venue-border bg-white px-4 py-2 shadow-card"
+                className="flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-2 shadow-sm"
               >
                 {editingCategoryId === c.id ? null : (
                   <>
-                    <span className="font-medium text-venue-foreground">{c.name}</span>
-                    <span className="text-sm text-venue-muted">({c.count})</span>
+                    <span className="font-medium text-slate-900">{c.name}</span>
+                    <span className="text-sm text-slate-500">({c.count})</span>
                     <button
                       type="button"
                       onClick={() => {
                         setEditingCategoryId(c.id)
                         setEditCategoryName(c.name)
                       }}
-                      className="text-sm text-venue-foreground hover:underline"
+                      className="text-sm text-slate-900 hover:underline"
                     >
                       Edit
                     </button>
@@ -359,7 +359,7 @@ export default function AdminProductsPage() {
       <section>
         <div className="mb-4 flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-2">
-            <h2 className="text-lg font-semibold text-venue-foreground">Products</h2>
+            <h2 className="text-lg font-semibold text-slate-900">Products</h2>
             <select
               value={filterCategory}
               onChange={(e) => setFilterCategory(e.target.value)}
@@ -393,7 +393,7 @@ export default function AdminProductsPage() {
 
         {(showItemForm || editingItem) && (
           <Card className="mb-6 p-6">
-            <h3 className="mb-4 font-semibold text-venue-foreground">
+            <h3 className="mb-4 font-semibold text-slate-900">
               {editingItem ? 'Edit product' : 'New product'}
             </h3>
             <form
@@ -401,7 +401,7 @@ export default function AdminProductsPage() {
               className="space-y-4"
             >
               <div>
-                <label className="mb-1 block text-sm font-medium text-venue-foreground">Name</label>
+                <label className="mb-1 block text-sm font-medium text-slate-900">Name</label>
                 <input
                   type="text"
                   value={itemForm.name}
@@ -413,7 +413,7 @@ export default function AdminProductsPage() {
                 />
               </div>
               <div>
-                <label className="mb-1 block text-sm font-medium text-venue-foreground">Price</label>
+                <label className="mb-1 block text-sm font-medium text-slate-900">Price</label>
                 <input
                   type="number"
                   step="0.01"
@@ -427,7 +427,7 @@ export default function AdminProductsPage() {
                 />
               </div>
               <div>
-                <label className="mb-1 block text-sm font-medium text-venue-foreground">Category</label>
+                <label className="mb-1 block text-sm font-medium text-slate-900">Category</label>
                 <select
                   value={itemForm.categoryId}
                   onChange={(e) => setItemForm((f) => ({ ...f, categoryId: e.target.value }))}
@@ -442,7 +442,7 @@ export default function AdminProductsPage() {
                 </select>
               </div>
               <div>
-                <label className="mb-1 block text-sm font-medium text-venue-foreground">Description (optional)</label>
+                <label className="mb-1 block text-sm font-medium text-slate-900">Description (optional)</label>
                 <input
                   type="text"
                   value={itemForm.description}
@@ -460,11 +460,11 @@ export default function AdminProductsPage() {
                   onChange={(e) => setItemForm((f) => ({ ...f, isActive: e.target.checked }))}
                   disabled={submitting}
                 />
-                <label htmlFor="isActive" className="text-sm text-venue-foreground">
+                <label htmlFor="isActive" className="text-sm text-slate-900">
                   Active (visible to guests)
                 </label>
               </div>
-              {submitError && <p className="text-sm text-red-600">{submitError}</p>}
+              {submitError && <p className="text-sm text-venue-danger">{submitError}</p>}
               <div className="flex gap-3">
                 <button type="submit" disabled={submitting} className="btn-primary">
                   {submitting ? 'Saving…' : editingItem ? 'Save' : 'Add product'}
@@ -493,11 +493,11 @@ export default function AdminProductsPage() {
             {filteredItems.map((item) => (
               <Card
                 key={item.id}
-                className={`flex flex-wrap items-center justify-between gap-4 p-5 transition-shadow hover:shadow-md ${!item.isActive ? 'opacity-60 bg-gray-50/50' : ''}`}
+                className={`flex flex-wrap items-center justify-between gap-4 p-6 transition-all hover:shadow-md ${!item.isActive ? 'opacity-60 bg-slate-50' : ''}`}
               >
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2">
-                    <h3 className={`font-semibold ${item.isActive ? 'text-venue-foreground' : 'text-gray-500'}`}>
+                    <h3 className={`font-semibold ${item.isActive ? 'text-slate-900' : 'text-slate-500'}`}>
                       {item.name}
                     </h3>
                     <Badge variant={item.isActive ? 'available' : 'disabled'}>
@@ -505,9 +505,9 @@ export default function AdminProductsPage() {
                     </Badge>
                   </div>
                   {item.description && (
-                    <p className="mt-1 text-sm text-venue-muted">{item.description}</p>
+                    <p className="mt-1 text-sm text-slate-500">{item.description}</p>
                   )}
-                  <p className="mt-1 text-sm font-medium text-venue-foreground">
+                  <p className="mt-1 text-sm font-medium text-slate-900">
                     ${Number(item.price).toFixed(2)} · {item.category?.name ?? '—'}
                   </p>
                 </div>

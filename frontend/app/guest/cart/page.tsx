@@ -121,7 +121,7 @@ export default function CartPage() {
   if (error) {
     return (
       <PageContainer title="Your cart" subtitle={VENUE_NAME}>
-        <p className="text-sm text-red-600">{error}</p>
+        <p className="text-sm text-venue-danger">{error}</p>
         <BottomBar backHref="/guest/menu" />
       </PageContainer>
     )
@@ -131,64 +131,64 @@ export default function CartPage() {
     <>
       <PageContainer title="Your cart" subtitle={VENUE_NAME}>
         <StepIndicator current="cart" />
-        <p className="mb-6 text-sm text-gray-500">Review your order before checkout.</p>
+        <p className="mb-6 text-xs text-slate-500">Review your order before checkout.</p>
         {order?.status === 'placed' ? (
-          <p className="text-sm text-venue-muted">Order already placed.</p>
+          <p className="text-sm text-slate-500">Order already placed.</p>
         ) : orderItems.length === 0 ? (
           <EmptyState title="Your cart is empty" description="Add items from the menu." />
         ) : (
           <div className="space-y-4">
             {orderItems.map((item) => (
-              <Card key={item.id} className="flex flex-wrap items-center justify-between gap-4 p-5">
+              <Card key={item.id} className="flex flex-wrap items-center justify-between gap-4 p-6 transition-all hover:shadow-md">
                 <div className="min-w-0 flex-1">
-                  <h3 className="font-medium text-venue-foreground">{item.menuItemName}</h3>
-                  <p className="mt-0.5 text-sm text-gray-500">
+                  <h3 className="font-medium text-slate-900">{item.menuItemName}</h3>
+                  <p className="mt-0.5 text-sm text-slate-500">
                     ${item.priceAtOrder.toFixed(2)} each
                   </p>
                 </div>
-                <div className="flex items-center gap-3">
-                  <div className="flex items-center rounded-lg border border-gray-200 bg-gray-50">
+                <div className="flex items-center gap-4">
+                  <div className="flex h-12 items-center rounded-xl border border-slate-200 bg-slate-50">
                     <button
                       type="button"
                       disabled={!!updatingId}
                       onClick={() => handleUpdateQuantity(item, -1)}
-                      className="flex h-11 w-11 shrink-0 items-center justify-center text-lg font-medium text-venue-foreground hover:bg-gray-100 disabled:opacity-50"
+                      className="flex h-12 w-12 shrink-0 items-center justify-center text-lg font-medium text-slate-900 hover:bg-slate-100 disabled:opacity-50"
                       aria-label="Decrease quantity"
                     >
                       −
                     </button>
-                    <span className="min-w-[2.5rem] text-center text-base font-semibold text-venue-foreground">
+                    <span className="min-w-[2.5rem] text-center text-base font-bold text-slate-900">
                       {item.quantity}
                     </span>
                     <button
                       type="button"
                       disabled={!!updatingId}
                       onClick={() => handleUpdateQuantity(item, 1)}
-                      className="flex h-11 w-11 shrink-0 items-center justify-center text-lg font-medium text-venue-foreground hover:bg-gray-100 disabled:opacity-50"
+                      className="flex h-12 w-12 shrink-0 items-center justify-center text-lg font-medium text-slate-900 hover:bg-slate-100 disabled:opacity-50"
                       aria-label="Increase quantity"
                     >
                       +
                     </button>
                   </div>
-                  <p className="w-20 shrink-0 text-right font-semibold text-venue-foreground">
+                  <p className="w-24 shrink-0 text-right text-lg font-bold text-slate-900">
                     ${(item.quantity * item.priceAtOrder).toFixed(2)}
                   </p>
                   <button
                     type="button"
                     disabled={!!updatingId}
                     onClick={() => handleRemove(item)}
-                    className="btn-secondary min-h-[44px] shrink-0 text-sm disabled:opacity-50"
+                    className="btn-secondary h-12 shrink-0 disabled:opacity-50"
                   >
                     Remove
                   </button>
                 </div>
               </Card>
             ))}
-            <div className="sticky bottom-0 rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
-              <p className="text-right text-xl font-bold text-venue-foreground">
+            <Card className="p-6">
+              <p className="text-right text-2xl font-bold text-slate-900">
                 Total: ${total.toFixed(2)}
               </p>
-            </div>
+            </Card>
           </div>
         )}
       </PageContainer>

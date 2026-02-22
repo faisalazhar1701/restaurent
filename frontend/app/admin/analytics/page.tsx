@@ -6,10 +6,10 @@ export default function AdminAnalyticsPage() {
   return (
     <div className="mx-auto max-w-5xl">
       <header className="mb-10">
-        <h1 className="text-2xl font-semibold tracking-tight text-venue-foreground sm:text-3xl">
+        <h1 className="text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl">
           Analytics
         </h1>
-        <p className="mt-1 text-sm text-venue-muted">Time-based utilization and insights</p>
+        <p className="mt-1 text-sm text-slate-500">Time-based utilization and insights</p>
       </header>
 
       <div className="mb-10">

@@ -52,10 +52,10 @@ export default function AdminTablesPage() {
     return (
       <div className="mx-auto max-w-5xl">
         <header className="mb-10">
-          <h1 className="text-2xl font-semibold tracking-tight text-venue-foreground sm:text-3xl">
+          <h1 className="text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl">
             Tables
           </h1>
-          <p className="mt-1 text-sm text-venue-muted">Loading…</p>
+          <p className="mt-1 text-sm text-slate-500">Loading…</p>
         </header>
         <Skeleton lines={6} />
       </div>
@@ -67,20 +67,20 @@ export default function AdminTablesPage() {
   return (
     <div className="mx-auto max-w-5xl">
       <header className="mb-10">
-        <h1 className="text-2xl font-semibold tracking-tight text-venue-foreground sm:text-3xl">
+        <h1 className="text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl">
           Tables
         </h1>
-        <p className="mt-1 text-sm text-venue-muted">
+        <p className="mt-1 text-sm text-slate-500">
           Manage zones and table capacity
         </p>
       </header>
 
       {error && (
-        <p className="mb-6 text-sm text-red-600">{error}</p>
+        <p className="mb-6 text-sm text-venue-danger">{error}</p>
       )}
 
       <Card className="mb-10 p-6">
-        <h2 className="text-lg font-semibold text-venue-foreground">Add table</h2>
+        <h2 className="text-lg font-semibold text-slate-900">Add table</h2>
         <form
           onSubmit={async (e) => {
             e.preventDefault()
@@ -108,7 +108,7 @@ export default function AdminTablesPage() {
           className="mt-6 flex flex-wrap items-end gap-4"
         >
           <div className="min-w-[140px]">
-            <label className="mb-1.5 block text-sm font-medium text-venue-foreground">
+            <label className="mb-1.5 block text-sm font-medium text-slate-900">
               Table number
             </label>
             <input
@@ -122,7 +122,7 @@ export default function AdminTablesPage() {
             />
           </div>
           <div className="min-w-[140px]">
-            <label className="mb-1.5 block text-sm font-medium text-venue-foreground">
+            <label className="mb-1.5 block text-sm font-medium text-slate-900">
               Zone (optional)
             </label>
             <input
@@ -135,7 +135,7 @@ export default function AdminTablesPage() {
             />
           </div>
           <div className="min-w-[100px]">
-            <label className="mb-1.5 block text-sm font-medium text-venue-foreground">
+            <label className="mb-1.5 block text-sm font-medium text-slate-900">
               Capacity
             </label>
             <input
@@ -157,15 +157,15 @@ export default function AdminTablesPage() {
           </button>
         </form>
         {addError && (
-          <p className="mt-4 text-sm text-red-600">{addError}</p>
+          <p className="mt-4 text-sm text-venue-danger">{addError}</p>
         )}
       </Card>
 
       <div className="mb-6 flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-venue-foreground">All tables</h2>
+        <h2 className="text-lg font-semibold text-slate-900">All tables</h2>
         <Link
           href="/admin/seating"
-          className="text-sm font-medium text-venue-foreground hover:underline"
+          className="text-sm font-medium text-slate-900 hover:underline"
         >
           View seating map →
         </Link>
@@ -179,9 +179,9 @@ export default function AdminTablesPage() {
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {safeTables.map((t) => (
-            <Card key={t.id} className="p-5 transition-shadow hover:shadow-md">
+            <Card key={t.id} className="p-6 transition-all hover:shadow-md">
               <div className="flex items-center justify-between">
-                <p className="font-semibold text-venue-foreground">
+                <p className="font-semibold text-slate-900">
                   {t.zone ? `${t.zone}-${t.tableNumber}` : `Table ${t.tableNumber}`}
                 </p>
                 <Badge
@@ -200,7 +200,7 @@ export default function AdminTablesPage() {
                       : 'Occupied'}
                 </Badge>
               </div>
-              <p className="mt-2 text-sm text-venue-muted">
+              <p className="mt-2 text-sm text-slate-500">
                 Capacity {t.capacity ?? 4}
               </p>
               <div className="mt-4 flex flex-wrap items-center gap-2">

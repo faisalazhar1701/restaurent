@@ -43,13 +43,13 @@ export default function AdminLoginPage() {
   }
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center bg-venue-surface px-4 py-16">
+    <main className="flex min-h-screen flex-col items-center justify-center bg-slate-50 px-4 py-16">
       <div className="w-full max-w-[400px]">
         <div className="mb-10 text-center">
-          <h1 className="text-2xl font-semibold tracking-tight text-venue-foreground">
+          <h1 className="text-2xl font-semibold tracking-tight text-slate-900">
             Venue Seat
           </h1>
-          <p className="mt-2 text-sm text-venue-muted">Admin sign in</p>
+          <p className="mt-2 text-sm text-slate-500">Admin sign in</p>
         </div>
         <Card className="p-8">
           <form onSubmit={handleSubmit} className="space-y-5">
@@ -59,7 +59,7 @@ export default function AdminLoginPage() {
               </p>
             )}
             <div>
-              <label htmlFor="email" className="mb-1.5 block text-sm font-medium text-venue-foreground">
+              <label htmlFor="email" className="mb-1.5 block text-sm font-medium text-slate-900">
                 Email
               </label>
               <input
@@ -74,7 +74,7 @@ export default function AdminLoginPage() {
               />
             </div>
             <div>
-              <label htmlFor="password" className="mb-1.5 block text-sm font-medium text-venue-foreground">
+              <label htmlFor="password" className="mb-1.5 block text-sm font-medium text-slate-900">
                 Password
               </label>
               <input
@@ -88,7 +88,7 @@ export default function AdminLoginPage() {
               />
             </div>
             {error && (
-              <p className="text-sm text-red-600">{error}</p>
+              <p className="text-sm text-venue-danger">{error}</p>
             )}
             <button
               type="submit"
@@ -99,8 +99,8 @@ export default function AdminLoginPage() {
             </button>
           </form>
         </Card>
-        <p className="mt-8 text-center text-sm text-venue-muted">
-          <Link href="/" className="font-medium text-venue-foreground hover:underline">
+        <p className="mt-8 text-center text-sm text-slate-500">
+          <Link href="/" className="font-medium text-slate-900 hover:underline">
             ← Back to home
           </Link>
         </p>

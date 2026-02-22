@@ -24,10 +24,10 @@ export function AdminNav() {
         <Link
           key={href}
           href={href}
-          className={`flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium transition-colors min-h-[44px] ${
+          className={`flex h-12 items-center gap-3 rounded-xl px-4 text-sm font-medium transition-all ${
             pathname === href
-              ? 'bg-blue-50 text-venue-primary font-medium'
-              : 'text-venue-muted hover:bg-venue-surface hover:text-venue-foreground'
+              ? 'bg-slate-900 text-white'
+              : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
           }`}
         >
           {label}
@@ -39,7 +39,7 @@ export function AdminNav() {
           clearAdminToken()
           window.location.href = '/admin/login'
         }}
-        className="mt-4 flex items-center gap-3 rounded-lg px-4 py-3 text-left text-sm font-medium text-gray-500 transition-colors hover:bg-gray-50 hover:text-venue-foreground min-h-[44px]"
+        className="mt-4 flex h-12 items-center gap-3 rounded-xl px-4 text-left text-sm font-medium text-slate-600 transition-all hover:bg-slate-100 hover:text-slate-900"
       >
         Sign out
       </button>

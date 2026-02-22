@@ -9,10 +9,10 @@ export function EmptyState({
   description?: string
 }) {
   return (
-    <div className="rounded-xl border border-dashed border-venue-border bg-venue-surface/60 px-6 py-12 text-center">
-      <p className="text-base font-medium text-venue-foreground">{title}</p>
+    <div className="rounded-2xl border-2 border-dashed border-slate-200 bg-white px-8 py-16 text-center">
+      <p className="text-base font-medium text-slate-900">{title}</p>
       {description && (
-        <p className="mt-1.5 text-sm text-gray-500">{description}</p>
+        <p className="mt-2 text-sm text-slate-500">{description}</p>
       )}
     </div>
   )

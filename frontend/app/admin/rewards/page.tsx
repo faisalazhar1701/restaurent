@@ -80,10 +80,10 @@ export default function AdminRewardsPage() {
     return (
       <div className="mx-auto max-w-5xl">
         <header className="mb-10">
-          <h1 className="text-2xl font-semibold tracking-tight text-venue-primary sm:text-3xl">
+          <h1 className="text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl">
             Rewards
           </h1>
-          <p className="mt-1 text-sm text-venue-muted">Loading…</p>
+          <p className="mt-1 text-sm text-slate-500">Loading…</p>
         </header>
         <Skeleton lines={6} />
       </div>
@@ -93,19 +93,19 @@ export default function AdminRewardsPage() {
   return (
     <div className="mx-auto max-w-5xl">
       <header className="mb-10">
-        <h1 className="text-2xl font-semibold tracking-tight text-venue-primary sm:text-3xl">
+        <h1 className="text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl">
           Rewards
         </h1>
-        <p className="mt-1 text-sm text-venue-muted">
+        <p className="mt-1 text-sm text-slate-500">
           Manage cross-restaurant rewards (mall-wide or per restaurant)
         </p>
       </header>
 
-      {error && <p className="mb-6 text-sm text-red-600">{error}</p>}
+      {error && <p className="mb-6 text-sm text-venue-danger">{error}</p>}
 
       <Card className="mb-10 p-6">
         <div className="flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-venue-primary">Add reward</h2>
+          <h2 className="text-lg font-semibold text-slate-900">Add reward</h2>
           <button
             type="button"
             onClick={() => setShowForm(!showForm)}
@@ -117,7 +117,7 @@ export default function AdminRewardsPage() {
         {showForm && (
           <form onSubmit={handleCreate} className="mt-6 space-y-4">
             <div>
-              <label className="mb-1 block text-sm font-medium text-venue-primary">Title</label>
+              <label className="mb-1 block text-sm font-medium text-slate-900">Title</label>
               <input
                 type="text"
                 value={form.title}
@@ -129,7 +129,7 @@ export default function AdminRewardsPage() {
               />
             </div>
             <div>
-              <label className="mb-1 block text-sm font-medium text-venue-primary">Description (optional)</label>
+              <label className="mb-1 block text-sm font-medium text-slate-900">Description (optional)</label>
               <input
                 type="text"
                 value={form.description}
@@ -140,7 +140,7 @@ export default function AdminRewardsPage() {
               />
             </div>
             <div>
-              <label className="mb-1 block text-sm font-medium text-venue-primary">Restaurant (optional = mall-wide)</label>
+              <label className="mb-1 block text-sm font-medium text-slate-900">Restaurant (optional = mall-wide)</label>
               <select
                 value={form.restaurantId}
                 onChange={(e) => setForm((f) => ({ ...f, restaurantId: e.target.value }))}
@@ -153,7 +153,7 @@ export default function AdminRewardsPage() {
                 ))}
               </select>
             </div>
-            {submitError && <p className="text-sm text-red-600">{submitError}</p>}
+            {submitError && <p className="text-sm text-venue-danger">{submitError}</p>}
             <button type="submit" disabled={submitting} className="btn-primary">
               {submitting ? 'Adding…' : 'Add'}
             </button>
@@ -168,9 +168,9 @@ export default function AdminRewardsPage() {
           {rewards.map((r) => (
             <Card key={r.id} className="flex flex-wrap items-center justify-between gap-4 p-5">
               <div>
-                <p className="font-semibold text-venue-primary">{r.title}</p>
-                {r.description && <p className="mt-1 text-sm text-venue-muted">{r.description}</p>}
-                <p className="mt-1 text-sm text-venue-muted">
+                <p className="font-semibold text-slate-900">{r.title}</p>
+                {r.description && <p className="mt-1 text-sm text-slate-500">{r.description}</p>}
+                <p className="mt-1 text-sm text-slate-500">
                   {r.restaurant ? r.restaurant.name : 'Mall-wide'}
                 </p>
               </div>

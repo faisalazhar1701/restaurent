@@ -83,10 +83,10 @@ export default function AdminRestaurantsPage() {
     return (
       <div className="mx-auto max-w-5xl">
         <header className="mb-10">
-          <h1 className="text-2xl font-semibold tracking-tight text-venue-foreground sm:text-3xl">
+          <h1 className="text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl">
             Restaurants
           </h1>
-          <p className="mt-1 text-sm text-venue-muted">Loading…</p>
+          <p className="mt-1 text-sm text-slate-500">Loading…</p>
         </header>
         <Skeleton lines={6} />
       </div>
@@ -96,23 +96,23 @@ export default function AdminRestaurantsPage() {
   return (
     <div className="mx-auto max-w-5xl">
       <header className="mb-10">
-        <h1 className="text-2xl font-semibold tracking-tight text-venue-foreground sm:text-3xl">
+        <h1 className="text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl">
           Restaurants
         </h1>
-        <p className="mt-1 text-sm text-venue-muted">
+        <p className="mt-1 text-sm text-slate-500">
           Add and enable or disable restaurants; use one per venue for menu scope
         </p>
       </header>
 
       {error && (
-        <p className="mb-6 text-sm text-red-600">{error}</p>
+        <p className="mb-6 text-sm text-venue-danger">{error}</p>
       )}
       {submitError && (
-        <p className="mb-6 text-sm text-red-600">{submitError}</p>
+        <p className="mb-6 text-sm text-venue-danger">{submitError}</p>
       )}
 
       <Card className="mb-10 p-6">
-        <h2 className="text-lg font-semibold text-venue-foreground">Add restaurant</h2>
+        <h2 className="text-lg font-semibold text-slate-900">Add restaurant</h2>
         <form onSubmit={handleAdd} className="mt-4 flex flex-wrap gap-3">
           <input
             type="text"
@@ -138,7 +138,7 @@ export default function AdminRestaurantsPage() {
           {restaurants.map((r) => (
             <Card key={r.id} className="flex flex-wrap items-center justify-between gap-4 p-5">
               <div className="flex items-center gap-2">
-                <span className="font-semibold text-venue-foreground">{r.name}</span>
+                <span className="font-semibold text-slate-900">{r.name}</span>
                 <Badge variant={r.isActive ? 'available' : 'occupied'}>
                   {r.isActive ? 'Active' : 'Disabled'}
                 </Badge>

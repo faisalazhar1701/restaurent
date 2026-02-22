@@ -10,11 +10,11 @@ export function Button({
   variant?: 'primary' | 'secondary' | 'accent'
   className?: string
 } & ButtonHTMLAttributes<HTMLButtonElement>) {
-  const base = 'rounded-lg px-4 py-2.5 text-sm font-medium min-h-[44px] disabled:opacity-50 disabled:cursor-not-allowed'
+  const base = 'h-12 rounded-xl px-6 text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-all'
   const variants = {
-    primary: 'bg-blue-600 text-white hover:bg-blue-700',
-    secondary: 'border border-gray-300 bg-white text-venue-foreground hover:bg-gray-50',
-    accent: 'bg-venue-primary text-white hover:bg-blue-700',
+    primary: 'bg-venue-primary text-white hover:bg-slate-800',
+    secondary: 'border border-slate-200 bg-white text-slate-700 hover:bg-slate-50',
+    accent: 'bg-venue-accent text-white hover:bg-blue-700',
   }
   return (
     <button className={`${base} ${variants[variant]} ${className}`} {...props}>
