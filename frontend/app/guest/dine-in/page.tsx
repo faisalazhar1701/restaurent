@@ -23,6 +23,7 @@ export default function DineInPage() {
   return (
     <>
       <PageContainer title="Party size" subtitle={VENUE_NAME}>
+        <p className="mb-6 text-sm text-venue-muted">How many people are dining? We&apos;ll find a suitable table.</p>
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
           {GUEST_COUNTS.map((n) => (
             <Card key={n} className="p-6 text-center transition-shadow hover:shadow-card-hover">

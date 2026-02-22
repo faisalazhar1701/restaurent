@@ -60,28 +60,33 @@ export default function AdminDashboardPage() {
       {error && <p className="mb-6 text-sm text-red-600">{error}</p>}
       <section className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
         <Card className="p-6 transition-shadow hover:shadow-card-hover">
-          <p className="text-sm font-medium text-venue-muted">Occupancy</p>
-          <p className="mt-2 text-3xl font-bold tracking-tight text-venue-primary">
+          <p className="text-sm font-medium uppercase tracking-wide text-venue-muted">Utilization</p>
+          <p className="mt-3 text-3xl font-bold tracking-tight text-venue-primary">
             {stats?.utilizationPercent ?? 0}%
           </p>
+          <p className="mt-1 text-xs text-venue-muted">Tables in use</p>
         </Card>
         <Card className="p-6 transition-shadow hover:shadow-card-hover">
-          <p className="text-sm font-medium text-venue-muted">Tables</p>
-          <p className="mt-2 text-3xl font-bold tracking-tight text-venue-primary">
-            {stats?.activeTablesCount ?? 0}/{stats?.tablesTotal ?? 0}
+          <p className="text-sm font-medium uppercase tracking-wide text-venue-muted">Active tables</p>
+          <p className="mt-3 text-3xl font-bold tracking-tight text-venue-primary">
+            {stats?.activeTablesCount ?? 0}
+            <span className="ml-1 text-xl font-normal text-venue-muted">/ {stats?.tablesTotal ?? 0}</span>
           </p>
+          <p className="mt-1 text-xs text-venue-muted">Occupied / total</p>
         </Card>
         <Card className="p-6 transition-shadow hover:shadow-card-hover">
-          <p className="text-sm font-medium text-venue-muted">Orders today</p>
-          <p className="mt-2 text-3xl font-bold tracking-tight text-venue-primary">
+          <p className="text-sm font-medium uppercase tracking-wide text-venue-muted">Orders today</p>
+          <p className="mt-3 text-3xl font-bold tracking-tight text-venue-primary">
             {stats?.ordersToday ?? 0}
           </p>
+          <p className="mt-1 text-xs text-venue-muted">Paid orders</p>
         </Card>
         <Card className="p-6 transition-shadow hover:shadow-card-hover">
-          <p className="text-sm font-medium text-venue-muted">Revenue today</p>
-          <p className="mt-2 text-3xl font-bold tracking-tight text-venue-primary">
+          <p className="text-sm font-medium uppercase tracking-wide text-venue-muted">Revenue today</p>
+          <p className="mt-3 text-3xl font-bold tracking-tight text-venue-primary">
             ${(stats?.totalRevenueToday ?? 0).toLocaleString()}
           </p>
+          <p className="mt-1 text-xs text-venue-muted">Paid orders only</p>
         </Card>
       </section>
       <section className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">

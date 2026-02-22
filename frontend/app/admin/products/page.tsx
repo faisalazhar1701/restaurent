@@ -486,16 +486,21 @@ export default function AdminProductsPage() {
         {filteredItems.length === 0 ? (
           <EmptyState
             title="No products yet"
-            description="Add products to display in the guest menu."
+            description="Add products above to display in the guest menu."
           />
         ) : (
           <div className="space-y-4">
             {filteredItems.map((item) => (
-              <Card key={item.id} className="flex flex-wrap items-center justify-between gap-4 p-5">
+              <Card
+                key={item.id}
+                className={`flex flex-wrap items-center justify-between gap-4 p-5 ${!item.isActive ? 'opacity-70' : ''}`}
+              >
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2">
-                    <h3 className="font-semibold text-venue-primary">{item.name}</h3>
-                    <Badge variant={item.isActive ? 'available' : 'occupied'}>
+                    <h3 className={`font-semibold ${item.isActive ? 'text-venue-primary' : 'text-venue-muted'}`}>
+                      {item.name}
+                    </h3>
+                    <Badge variant={item.isActive ? 'available' : 'disabled'}>
                       {item.isActive ? 'Active' : 'Hidden'}
                     </Badge>
                   </div>

@@ -62,19 +62,21 @@ export default function RewardsPage() {
     <>
       <PageContainer title="Rewards" subtitle="Offers from restaurants">
         {rewards.length === 0 ? (
-          <EmptyState title="No rewards available" description="Check back later for offers." />
+          <EmptyState title="No rewards available right now" description="Check back later for offers." />
         ) : (
           <div className="space-y-4">
             {rewards.map((r) => (
-              <Card key={r.id} className="p-5">
-                <p className="font-medium text-venue-primary">{r.title}</p>
+              <Card key={r.id} className="p-6 shadow-card hover:shadow-card-hover">
+                <p className="text-lg font-semibold text-venue-primary">{r.title}</p>
                 {r.description && (
-                  <p className="mt-1 text-sm text-venue-muted">{r.description}</p>
+                  <p className="mt-2 text-sm text-venue-muted">{r.description}</p>
                 )}
                 {r.restaurant && (
-                  <p className="mt-1 text-sm text-venue-muted">{r.restaurant.name}</p>
+                  <p className="mt-1 text-sm text-venue-muted">From {r.restaurant.name}</p>
                 )}
-                <p className="mt-3 text-sm font-medium text-venue-primary">Redeem at counter</p>
+                <p className="mt-4 rounded-lg bg-venue-surface px-4 py-2 text-sm font-medium text-venue-primary">
+                  Redeem at counter
+                </p>
               </Card>
             ))}
           </div>

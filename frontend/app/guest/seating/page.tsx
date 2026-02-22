@@ -4,6 +4,7 @@ import { Suspense, useState, useEffect, useCallback } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { PageContainer } from '@/components/guest/PageContainer'
 import { BottomBar } from '@/components/guest/BottomBar'
+import { StepIndicator } from '@/components/guest/StepIndicator'
 import { Card } from '@/components/ui/Card'
 import { Skeleton } from '@/components/ui/Skeleton'
 import { VENUE_NAME } from '@/lib/dummy-data'
@@ -250,13 +251,24 @@ function SeatingPageInner() {
   }
 
   if (error) {
+    const isWaitState = error.includes('All tables are currently occupied') || error.includes('not available')
     return (
       <PageContainer title="Seating" subtitle={VENUE_NAME}>
-        <p className="text-red-600">{error}</p>
-        <button type="button" onClick={handleRestart} className="btn-primary mt-4">
-          Start over
-        </button>
-        <BottomBar backHref="/guest" />
+        <StepIndicator current="seating" />
+        <Card className="p-8 text-center">
+          <p className={`text-lg font-medium ${isWaitState ? 'text-venue-warning' : 'text-red-600'}`}>
+            {error}
+          </p>
+          {isWaitState && (
+            <p className="mt-3 text-sm text-venue-muted">
+              Please wait for a table to become available, or ask staff for assistance.
+            </p>
+          )}
+          <button type="button" onClick={handleRestart} className="btn-primary mt-6">
+            Start over
+          </button>
+        </Card>
+        <BottomBar backHref="/guest/cart" />
       </PageContainer>
     )
   }
@@ -268,11 +280,12 @@ function SeatingPageInner() {
   return (
     <>
       <PageContainer title="Your table" subtitle={VENUE_NAME}>
+        <StepIndicator current="seating" />
         <Card className="p-10 text-center">
-          <p className="text-4xl font-bold tracking-tight text-venue-primary sm:text-5xl">
+          <p className="text-5xl font-bold tracking-tight text-venue-primary sm:text-6xl md:text-7xl">
             {table ? `Table ${table.zone ? `${table.zone}-` : ''}${table.tableNumber}` : '—'}
           </p>
-          <p className="mt-3 text-venue-muted">
+          <p className="mt-4 text-base text-venue-muted">
             {paymentSuccess ? 'Payment successful.' : preAssigned ? 'Pre-assigned via table QR.' : table ? 'Your table has been assigned.' : 'Complete payment to receive your table.'}
           </p>
         </Card>
@@ -284,8 +297,9 @@ function SeatingPageInner() {
               onClick={handlePlaceOrder}
               className="btn-primary w-full py-4 disabled:opacity-50"
             >
-              {placing ? 'Placing order…' : 'Place order'}
+              {placing ? 'Placing order…' : 'Confirm order'}
             </button>
+            <p className="mt-2 text-center text-xs text-venue-muted">Payment handled at counter</p>
             {placeError && (
               <p className="mt-3 text-sm text-red-600">{placeError}</p>
             )}
@@ -301,15 +315,18 @@ function SeatingPageInner() {
             >
               {placing ? 'Redirecting…' : 'Pay now'}
             </button>
+            <p className="mt-2 text-center text-xs text-venue-muted">Secure checkout · Payment at counter also available</p>
             {placeError && (
               <p className="mt-3 text-sm text-red-600">{placeError}</p>
             )}
           </div>
         )}
         {placed && (
-          <p className="mt-8 text-center text-lg font-semibold text-venue-primary">
-            {paymentSuccess ? 'Payment successful' : 'Order placed'}
-          </p>
+          <Card className="mt-8 border-venue-success/30 bg-emerald-50/50 p-6 text-center">
+            <p className="text-lg font-semibold text-venue-success">
+              {paymentSuccess ? 'Payment successful · Seating confirmed' : 'Order placed · Seating confirmed'}
+            </p>
+          </Card>
         )}
       </PageContainer>
       <BottomBar

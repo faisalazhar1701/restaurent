@@ -1,10 +1,11 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
+import { useState, useEffect, Suspense } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { PageContainer } from '@/components/guest/PageContainer'
 import { BottomBar } from '@/components/guest/BottomBar'
+import { StepIndicator } from '@/components/guest/StepIndicator'
 import { Card } from '@/components/ui/Card'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { Skeleton } from '@/components/ui/Skeleton'
@@ -21,8 +22,10 @@ import {
   ApiError,
 } from '@/lib/api'
 
-export default function MenuPage() {
+function MenuPageInner() {
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const emptyCartMessage = searchParams.get('message') === 'empty_cart'
   const [categories, setCategories] = useState<MenuCategory[]>([])
   const [items, setItems] = useState<MenuItem[]>([])
   const [order, setOrder] = useState<OrderResponse | null>(null)
@@ -118,6 +121,12 @@ export default function MenuPage() {
   return (
     <>
       <PageContainer title="Menu" subtitle={VENUE_NAME}>
+        <StepIndicator current="menu" />
+        {emptyCartMessage && (
+          <p className="mb-4 rounded-xl border border-venue-border bg-venue-surface px-4 py-3 text-sm text-venue-muted">
+            Your cart is empty. Add items below to continue.
+          </p>
+        )}
         <Link
           href="/guest/cart"
           className="mb-8 flex items-center justify-between rounded-xl border border-venue-border bg-white px-5 py-4 shadow-card transition-shadow hover:shadow-card-hover"
@@ -144,8 +153,8 @@ export default function MenuPage() {
         <div className="space-y-4">
           {safeCategories.length === 0 ? (
             <EmptyState
-              title="Menu is empty"
-              description="Products will appear here once added by the venue."
+              title="No products yet"
+              description="Products will appear here once added from admin."
             />
           ) : filteredItems.length === 0 ? (
             <EmptyState title="No items in this category" description="Select another category." />
@@ -176,5 +185,17 @@ export default function MenuPage() {
       </PageContainer>
       <BottomBar backHref="/guest" nextHref="/guest/cart" nextLabel="Continue to checkout" />
     </>
+  )
+}
+
+export default function MenuPage() {
+  return (
+    <Suspense fallback={
+      <PageContainer title="Menu" subtitle={VENUE_NAME}>
+        <Skeleton lines={4} />
+      </PageContainer>
+    }>
+      <MenuPageInner />
+    </Suspense>
   )
 }

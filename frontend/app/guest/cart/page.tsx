@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { PageContainer } from '@/components/guest/PageContainer'
+import { StepIndicator } from '@/components/guest/StepIndicator'
 import { BottomBar } from '@/components/guest/BottomBar'
 import { Card } from '@/components/ui/Card'
 import { EmptyState } from '@/components/ui/EmptyState'
@@ -49,7 +50,7 @@ export default function CartPage() {
         const items = draft?.items ?? []
         const itemCount = items.reduce((s, i) => s + (i.quantity ?? 0), 0)
         if (draft?.status === 'draft' && itemCount === 0) {
-          router.replace('/guest/menu')
+          router.replace('/guest/menu?message=empty_cart')
           return
         }
       } catch (e) {
@@ -129,6 +130,8 @@ export default function CartPage() {
   return (
     <>
       <PageContainer title="Your cart" subtitle={VENUE_NAME}>
+        <StepIndicator current="cart" />
+        <p className="mb-4 text-sm text-venue-muted">Review your order before checkout.</p>
         {order?.status === 'placed' ? (
           <p className="text-sm text-venue-muted">Order already placed.</p>
         ) : orderItems.length === 0 ? (
