@@ -19,15 +19,15 @@ export function AdminNav() {
   ]
 
   return (
-    <nav className="flex flex-col gap-0.5 p-4">
+    <nav className="flex flex-col gap-1 p-4">
       {nav.map(({ href, label }) => (
         <Link
           key={href}
           href={href}
-          className={`rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
+          className={`flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium transition-colors min-h-[44px] ${
             pathname === href
-              ? 'bg-venue-primary/5 text-venue-primary'
-              : 'text-venue-muted hover:bg-venue-surface hover:text-venue-primary'
+              ? 'bg-blue-50 text-venue-primary font-medium'
+              : 'text-venue-muted hover:bg-venue-surface hover:text-venue-foreground'
           }`}
         >
           {label}
@@ -39,7 +39,7 @@ export function AdminNav() {
           clearAdminToken()
           window.location.href = '/admin/login'
         }}
-        className="mt-4 rounded-lg px-3 py-2.5 text-left text-sm font-medium text-venue-muted transition-colors hover:bg-venue-surface hover:text-venue-primary"
+        className="mt-4 flex items-center gap-3 rounded-lg px-4 py-3 text-left text-sm font-medium text-gray-500 transition-colors hover:bg-gray-50 hover:text-venue-foreground min-h-[44px]"
       >
         Sign out
       </button>

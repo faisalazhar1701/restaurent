@@ -27,7 +27,7 @@ export function StepIndicator({ current }: { current: 'menu' | 'cart' | 'seating
                     ? 'bg-venue-primary text-white'
                     : isPast
                       ? 'bg-venue-primary/10 text-venue-primary'
-                      : 'bg-venue-surface text-venue-muted'
+                      : 'bg-gray-100 text-gray-500'
                 }`}
               >
                 {step.label}

@@ -32,7 +32,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
 
   if (!ready || !getAdminToken()) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-venue-surface">
+      <div className="flex min-h-screen items-center justify-center bg-venue-surface text-venue-foreground">
         <p className="text-sm text-venue-muted">Loading…</p>
       </div>
     )
@@ -40,15 +40,15 @@ export function AdminShell({ children }: { children: ReactNode }) {
 
   return (
     <div className="flex min-h-screen flex-col bg-venue-surface sm:flex-row">
-      <aside className="w-full shrink-0 border-r border-venue-border bg-white sm:w-56">
-        <div className="border-b border-venue-border px-5 py-5">
+      <aside className="w-full shrink-0 border-r border-gray-200 bg-white sm:w-56">
+        <div className="border-b border-gray-200 px-5 py-5">
           <Link
             href="/admin"
-            className="text-lg font-semibold tracking-tight text-venue-primary"
+            className="text-lg font-semibold tracking-tight text-venue-foreground"
           >
             Venue Seat
           </Link>
-          <p className="mt-1 text-xs text-venue-muted">Admin</p>
+          <p className="mt-1 text-xs text-gray-500">Admin</p>
         </div>
         <AdminNav />
       </aside>

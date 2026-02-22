@@ -66,7 +66,7 @@ export default function AdminSeatingPage() {
     return (
       <div className="mx-auto max-w-5xl">
         <header className="mb-10">
-          <h1 className="text-2xl font-semibold tracking-tight text-venue-primary sm:text-3xl">
+          <h1 className="text-2xl font-semibold tracking-tight text-venue-foreground sm:text-3xl">
             Seating
           </h1>
           <p className="mt-1 text-sm text-venue-muted">Loading…</p>
@@ -80,13 +80,13 @@ export default function AdminSeatingPage() {
     return (
       <div className="mx-auto max-w-5xl">
         <header className="mb-10">
-          <h1 className="text-2xl font-semibold tracking-tight text-venue-primary sm:text-3xl">
+          <h1 className="text-2xl font-semibold tracking-tight text-venue-foreground sm:text-3xl">
             Seating
           </h1>
         </header>
         <p className="text-red-600">{error}</p>
         <p className="mt-3 text-sm text-venue-muted">
-          <Link href="/admin/tables" className="font-medium text-venue-primary hover:underline">
+          <Link href="/admin/tables" className="font-medium text-venue-foreground hover:underline">
             Manage tables
           </Link>{' '}
           to add tables.
@@ -101,7 +101,7 @@ export default function AdminSeatingPage() {
   return (
     <div className="mx-auto max-w-5xl">
       <header className="mb-10">
-        <h1 className="text-2xl font-semibold tracking-tight text-venue-primary sm:text-3xl">
+        <h1 className="text-2xl font-semibold tracking-tight text-venue-foreground sm:text-3xl">
           Seating
         </h1>
         <p className="mt-1 text-sm text-venue-muted">
@@ -110,7 +110,7 @@ export default function AdminSeatingPage() {
       </header>
 
       <section className="mb-12">
-        <h2 className="mb-4 text-lg font-semibold text-venue-primary">Tables</h2>
+        <h2 className="mb-4 text-lg font-semibold text-venue-foreground">Tables</h2>
         {safeTables.length === 0 ? (
           <EmptyState
             title="No tables yet"
@@ -121,14 +121,15 @@ export default function AdminSeatingPage() {
             {safeTables.map((t) => (
               <Card
                 key={t.id}
-                className="p-5 text-center transition-shadow hover:shadow-card-hover"
+                className="p-5 text-center transition-shadow hover:shadow-md"
               >
-                <p className="text-xl font-bold tracking-tight text-venue-primary">
+                <p className="text-xl font-bold tracking-tight text-venue-foreground">
                   {t.zone ? `${t.zone}-` : ''}{t.tableNumber}
                 </p>
+                <p className="mt-1 text-sm text-gray-500">Capacity {t.capacity ?? 4}</p>
                 <div className="mt-3">
-                  <Badge variant={t.status === 'available' ? 'available' : 'occupied'}>
-                    {t.status === 'available' ? 'Available' : 'Occupied'}
+                  <Badge variant={t.status === 'available' ? 'available' : t.status === 'disabled' ? 'disabled' : 'occupied'}>
+                    {t.status === 'available' ? 'Available' : t.status === 'disabled' ? 'Disabled' : 'Occupied'}
                   </Badge>
                 </div>
               </Card>
@@ -139,12 +140,12 @@ export default function AdminSeatingPage() {
 
       {sessions.length > 0 && (
         <section className="mb-12">
-          <h2 className="mb-4 text-lg font-semibold text-venue-primary">Active sessions</h2>
+          <h2 className="mb-4 text-lg font-semibold text-venue-foreground">Active sessions</h2>
           <div className="space-y-4">
             {sessions.map((s) => (
               <Card key={s.id} className="flex flex-wrap items-center justify-between gap-4 p-5">
                 <div>
-                  <p className="font-semibold text-venue-primary">
+                  <p className="font-semibold text-venue-foreground">
                     Table {s.tableNumber ?? '—'}
                   </p>
                   <p className="text-sm text-venue-muted">
@@ -155,7 +156,7 @@ export default function AdminSeatingPage() {
                   type="button"
                   disabled={!!endingId}
                   onClick={() => handleEndSession(s.id)}
-                  className="btn-secondary text-sm disabled:opacity-50"
+                  className="rounded-lg border border-red-200 bg-white px-4 py-2 text-sm font-medium text-red-700 hover:bg-red-50 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {endingId === s.id ? 'Ending…' : 'End session'}
                 </button>
@@ -166,14 +167,14 @@ export default function AdminSeatingPage() {
       )}
 
       <section>
-        <h2 className="mb-4 text-lg font-semibold text-venue-primary">By zone</h2>
+        <h2 className="mb-4 text-lg font-semibold text-venue-foreground">By zone</h2>
         <div className="grid gap-6 sm:grid-cols-2">
           {zones.map((zone) => {
             const pct = zone.tables > 0 ? Math.round((zone.occupied / zone.tables) * 100) : 0
             return (
               <Card key={zone.id} className="p-6">
                 <div className="flex items-center justify-between">
-                  <h3 className="font-semibold text-venue-primary">{zone.name}</h3>
+                  <h3 className="font-semibold text-venue-foreground">{zone.name}</h3>
                   <span className="text-sm text-venue-muted">
                     {zone.occupied}/{zone.tables}
                   </span>

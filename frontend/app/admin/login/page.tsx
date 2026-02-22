@@ -46,7 +46,7 @@ export default function AdminLoginPage() {
     <main className="flex min-h-screen flex-col items-center justify-center bg-venue-surface px-4 py-16">
       <div className="w-full max-w-[400px]">
         <div className="mb-10 text-center">
-          <h1 className="text-2xl font-semibold tracking-tight text-venue-primary">
+          <h1 className="text-2xl font-semibold tracking-tight text-venue-foreground">
             Venue Seat
           </h1>
           <p className="mt-2 text-sm text-venue-muted">Admin sign in</p>
@@ -59,7 +59,7 @@ export default function AdminLoginPage() {
               </p>
             )}
             <div>
-              <label htmlFor="email" className="mb-1.5 block text-sm font-medium text-venue-primary">
+              <label htmlFor="email" className="mb-1.5 block text-sm font-medium text-venue-foreground">
                 Email
               </label>
               <input
@@ -74,7 +74,7 @@ export default function AdminLoginPage() {
               />
             </div>
             <div>
-              <label htmlFor="password" className="mb-1.5 block text-sm font-medium text-venue-primary">
+              <label htmlFor="password" className="mb-1.5 block text-sm font-medium text-venue-foreground">
                 Password
               </label>
               <input
@@ -100,7 +100,7 @@ export default function AdminLoginPage() {
           </form>
         </Card>
         <p className="mt-8 text-center text-sm text-venue-muted">
-          <Link href="/" className="font-medium text-venue-primary hover:underline">
+          <Link href="/" className="font-medium text-venue-foreground hover:underline">
             ← Back to home
           </Link>
         </p>

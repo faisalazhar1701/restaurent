@@ -123,16 +123,16 @@ function MenuPageInner() {
       <PageContainer title="Menu" subtitle={VENUE_NAME}>
         <StepIndicator current="menu" />
         {emptyCartMessage && (
-          <p className="mb-4 rounded-xl border border-venue-border bg-venue-surface px-4 py-3 text-sm text-venue-muted">
+          <p className="mb-4 rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-600">
             Your cart is empty. Add items below to continue.
           </p>
         )}
         <Link
           href="/guest/cart"
-          className="mb-8 flex items-center justify-between rounded-xl border border-venue-border bg-white px-5 py-4 shadow-card transition-shadow hover:shadow-card-hover"
+          className="mb-8 flex min-h-[52px] items-center justify-between rounded-xl border border-gray-200 bg-white px-5 py-4 shadow-sm transition-shadow hover:shadow-md"
         >
-          <span className="font-medium text-venue-primary">Cart</span>
-          <span className="font-semibold text-venue-primary">{cartCount} {cartCount === 1 ? 'item' : 'items'}</span>
+          <span className="font-medium text-venue-foreground">Cart</span>
+          <span className="font-semibold text-venue-foreground">{cartCount} {cartCount === 1 ? 'item' : 'items'}</span>
         </Link>
         <div className="-mx-1 mb-8 flex gap-2 overflow-x-auto pb-2">
           {safeCategories.map((cat) => (
@@ -140,10 +140,10 @@ function MenuPageInner() {
               key={cat.id}
               type="button"
               onClick={() => setActiveCategory(cat.id)}
-              className={`min-h-[44px] shrink-0 rounded-xl px-4 py-2.5 text-sm font-medium transition-colors ${
+              className={`min-h-[44px] shrink-0 rounded-full px-5 py-2.5 text-sm font-medium transition-colors ${
                 activeCategory === cat.id
                   ? 'bg-venue-primary text-white'
-                  : 'border border-venue-border bg-white text-venue-muted hover:border-venue-primary/40'
+                  : 'border border-gray-200 bg-white text-venue-muted hover:border-venue-primary/40 hover:text-venue-foreground'
               }`}
             >
               {cat.name}
@@ -160,13 +160,13 @@ function MenuPageInner() {
             <EmptyState title="No items in this category" description="Select another category." />
           ) : (
             filteredItems.map((item) => (
-              <Card key={item.id} className="flex flex-row items-start gap-5 p-5">
+              <Card key={item.id} className="flex flex-row items-center gap-4 p-5 transition-shadow hover:shadow-md">
                 <div className="min-w-0 flex-1">
-                  <h3 className="font-semibold text-venue-primary">{item.name}</h3>
+                  <h3 className="text-base font-semibold text-venue-foreground">{item.name}</h3>
                   {item.description && (
-                    <p className="mt-1 text-sm text-venue-muted">{item.description}</p>
+                    <p className="mt-0.5 text-sm text-gray-500">{item.description}</p>
                   )}
-                  <p className="mt-2 text-lg font-semibold text-venue-primary">
+                  <p className="mt-2 text-lg font-bold text-venue-foreground">
                     ${Number(item.price).toFixed(2)}
                   </p>
                 </div>

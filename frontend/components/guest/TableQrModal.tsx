@@ -43,13 +43,13 @@ export function TableQrModal({ tableNumber, zone, onClose }: TableQrModalProps) 
     >
       <div className="max-h-[90vh] w-full max-w-sm overflow-auto rounded-xl bg-white p-6 shadow-xl">
         <div className="mb-4 flex items-center justify-between">
-          <h2 id="qr-modal-title" className="text-lg font-semibold text-venue-primary">
+          <h2 id="qr-modal-title" className="text-lg font-semibold text-venue-foreground">
             Table {zone ? `${zone}-` : ''}{tableNumber} QR
           </h2>
           <button
             type="button"
             onClick={onClose}
-            className="rounded p-1 text-venue-muted hover:bg-venue-surface hover:text-venue-primary"
+            className="rounded p-1 text-venue-muted hover:bg-venue-surface hover:text-venue-foreground"
             aria-label="Close"
           >
             ×

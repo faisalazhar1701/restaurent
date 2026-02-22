@@ -83,7 +83,7 @@ export default function AdminRestaurantsPage() {
     return (
       <div className="mx-auto max-w-5xl">
         <header className="mb-10">
-          <h1 className="text-2xl font-semibold tracking-tight text-venue-primary sm:text-3xl">
+          <h1 className="text-2xl font-semibold tracking-tight text-venue-foreground sm:text-3xl">
             Restaurants
           </h1>
           <p className="mt-1 text-sm text-venue-muted">Loading…</p>
@@ -96,7 +96,7 @@ export default function AdminRestaurantsPage() {
   return (
     <div className="mx-auto max-w-5xl">
       <header className="mb-10">
-        <h1 className="text-2xl font-semibold tracking-tight text-venue-primary sm:text-3xl">
+        <h1 className="text-2xl font-semibold tracking-tight text-venue-foreground sm:text-3xl">
           Restaurants
         </h1>
         <p className="mt-1 text-sm text-venue-muted">
@@ -112,7 +112,7 @@ export default function AdminRestaurantsPage() {
       )}
 
       <Card className="mb-10 p-6">
-        <h2 className="text-lg font-semibold text-venue-primary">Add restaurant</h2>
+        <h2 className="text-lg font-semibold text-venue-foreground">Add restaurant</h2>
         <form onSubmit={handleAdd} className="mt-4 flex flex-wrap gap-3">
           <input
             type="text"
@@ -138,7 +138,7 @@ export default function AdminRestaurantsPage() {
           {restaurants.map((r) => (
             <Card key={r.id} className="flex flex-wrap items-center justify-between gap-4 p-5">
               <div className="flex items-center gap-2">
-                <span className="font-semibold text-venue-primary">{r.name}</span>
+                <span className="font-semibold text-venue-foreground">{r.name}</span>
                 <Badge variant={r.isActive ? 'available' : 'occupied'}>
                   {r.isActive ? 'Active' : 'Disabled'}
                 </Badge>

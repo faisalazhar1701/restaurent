@@ -131,7 +131,7 @@ export default function CartPage() {
     <>
       <PageContainer title="Your cart" subtitle={VENUE_NAME}>
         <StepIndicator current="cart" />
-        <p className="mb-4 text-sm text-venue-muted">Review your order before checkout.</p>
+        <p className="mb-6 text-sm text-gray-500">Review your order before checkout.</p>
         {order?.status === 'placed' ? (
           <p className="text-sm text-venue-muted">Order already placed.</p>
         ) : orderItems.length === 0 ? (
@@ -139,51 +139,53 @@ export default function CartPage() {
         ) : (
           <div className="space-y-4">
             {orderItems.map((item) => (
-              <Card key={item.id} className="flex items-center justify-between gap-4 p-5">
+              <Card key={item.id} className="flex flex-wrap items-center justify-between gap-4 p-5">
                 <div className="min-w-0 flex-1">
-                  <h3 className="font-medium text-venue-primary">{item.menuItemName}</h3>
-                  <p className="mt-0.5 text-sm text-venue-muted">
+                  <h3 className="font-medium text-venue-foreground">{item.menuItemName}</h3>
+                  <p className="mt-0.5 text-sm text-gray-500">
                     ${item.priceAtOrder.toFixed(2)} each
                   </p>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-3">
+                  <div className="flex items-center rounded-lg border border-gray-200 bg-gray-50">
+                    <button
+                      type="button"
+                      disabled={!!updatingId}
+                      onClick={() => handleUpdateQuantity(item, -1)}
+                      className="flex h-11 w-11 shrink-0 items-center justify-center text-lg font-medium text-venue-foreground hover:bg-gray-100 disabled:opacity-50"
+                      aria-label="Decrease quantity"
+                    >
+                      −
+                    </button>
+                    <span className="min-w-[2.5rem] text-center text-base font-semibold text-venue-foreground">
+                      {item.quantity}
+                    </span>
+                    <button
+                      type="button"
+                      disabled={!!updatingId}
+                      onClick={() => handleUpdateQuantity(item, 1)}
+                      className="flex h-11 w-11 shrink-0 items-center justify-center text-lg font-medium text-venue-foreground hover:bg-gray-100 disabled:opacity-50"
+                      aria-label="Increase quantity"
+                    >
+                      +
+                    </button>
+                  </div>
+                  <p className="w-20 shrink-0 text-right font-semibold text-venue-foreground">
+                    ${(item.quantity * item.priceAtOrder).toFixed(2)}
+                  </p>
                   <button
                     type="button"
                     disabled={!!updatingId}
-                    onClick={() => handleUpdateQuantity(item, -1)}
-                    className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-venue-border bg-white text-lg font-medium text-venue-primary hover:bg-venue-surface disabled:opacity-50"
-                    aria-label="Decrease quantity"
+                    onClick={() => handleRemove(item)}
+                    className="btn-secondary min-h-[44px] shrink-0 text-sm disabled:opacity-50"
                   >
-                    −
-                  </button>
-                  <span className="min-w-[2rem] text-center font-semibold text-venue-primary">
-                    {item.quantity}
-                  </span>
-                  <button
-                    type="button"
-                    disabled={!!updatingId}
-                    onClick={() => handleUpdateQuantity(item, 1)}
-                    className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-venue-border bg-white text-lg font-medium text-venue-primary hover:bg-venue-surface disabled:opacity-50"
-                    aria-label="Increase quantity"
-                  >
-                    +
+                    Remove
                   </button>
                 </div>
-                <p className="w-20 shrink-0 text-right font-semibold text-venue-primary">
-                  ${(item.quantity * item.priceAtOrder).toFixed(2)}
-                </p>
-                <button
-                  type="button"
-                  disabled={!!updatingId}
-                  onClick={() => handleRemove(item)}
-                  className="btn-secondary min-h-[44px] shrink-0 text-sm disabled:opacity-50"
-                >
-                  Remove
-                </button>
               </Card>
             ))}
-            <div className="rounded-xl border border-venue-border bg-white p-4">
-              <p className="text-right text-lg font-semibold text-venue-primary">
+            <div className="sticky bottom-0 rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+              <p className="text-right text-xl font-bold text-venue-foreground">
                 Total: ${total.toFixed(2)}
               </p>
             </div>

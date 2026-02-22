@@ -7,7 +7,7 @@ export default function HomePage() {
         <p className="text-sm font-medium uppercase tracking-wider text-venue-muted">
           Mall & Food Court Operations
         </p>
-        <h1 className="mt-3 text-3xl font-semibold tracking-tight text-venue-primary sm:text-4xl">
+        <h1 className="mt-3 text-3xl font-semibold tracking-tight text-venue-foreground sm:text-4xl">
           Venue Seat
         </h1>
         <p className="mt-4 text-base text-venue-muted">

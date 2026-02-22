@@ -255,12 +255,15 @@ function SeatingPageInner() {
     return (
       <PageContainer title="Seating" subtitle={VENUE_NAME}>
         <StepIndicator current="seating" />
-        <Card className="p-8 text-center">
-          <p className={`text-lg font-medium ${isWaitState ? 'text-venue-warning' : 'text-red-600'}`}>
+        <Card className="p-8 text-center border-amber-200 bg-amber-50/50">
+          <span className="mb-4 inline-block rounded-full bg-amber-100 px-3 py-1 text-sm font-medium text-amber-800">
+            Waiting
+          </span>
+          <p className={`text-lg font-medium ${isWaitState ? 'text-amber-800' : 'text-venue-danger'}`}>
             {error}
           </p>
           {isWaitState && (
-            <p className="mt-3 text-sm text-venue-muted">
+            <p className="mt-3 text-sm text-gray-600">
               Please wait for a table to become available, or ask staff for assistance.
             </p>
           )}
@@ -281,11 +284,16 @@ function SeatingPageInner() {
     <>
       <PageContainer title="Your table" subtitle={VENUE_NAME}>
         <StepIndicator current="seating" />
-        <Card className="p-10 text-center">
-          <p className="text-5xl font-bold tracking-tight text-venue-primary sm:text-6xl md:text-7xl">
+        <Card className="p-10 text-center transition-shadow hover:shadow-md">
+          <p className="text-6xl font-bold tracking-tight text-venue-foreground sm:text-7xl md:text-8xl">
             {table ? `Table ${table.zone ? `${table.zone}-` : ''}${table.tableNumber}` : '—'}
           </p>
-          <p className="mt-4 text-base text-venue-muted">
+          {table && placed && (
+            <span className="mt-4 inline-block rounded-full bg-green-100 px-3 py-1 text-sm font-medium text-green-800">
+              Assigned
+            </span>
+          )}
+          <p className="mt-4 text-base text-gray-500">
             {paymentSuccess ? 'Payment successful.' : preAssigned ? 'Pre-assigned via table QR.' : table ? 'Your table has been assigned.' : 'Complete payment to receive your table.'}
           </p>
         </Card>
@@ -301,7 +309,7 @@ function SeatingPageInner() {
             </button>
             <p className="mt-2 text-center text-xs text-venue-muted">Payment handled at counter</p>
             {placeError && (
-              <p className="mt-3 text-sm text-red-600">{placeError}</p>
+              <p className="mt-3 text-sm text-venue-danger">{placeError}</p>
             )}
           </div>
         )}
@@ -317,13 +325,13 @@ function SeatingPageInner() {
             </button>
             <p className="mt-2 text-center text-xs text-venue-muted">Secure checkout · Payment at counter also available</p>
             {placeError && (
-              <p className="mt-3 text-sm text-red-600">{placeError}</p>
+              <p className="mt-3 text-sm text-venue-danger">{placeError}</p>
             )}
           </div>
         )}
         {placed && (
-          <Card className="mt-8 border-venue-success/30 bg-emerald-50/50 p-6 text-center">
-            <p className="text-lg font-semibold text-venue-success">
+          <Card className="mt-8 border-green-200 bg-green-50 p-6 text-center">
+            <p className="text-lg font-semibold text-green-700">
               {paymentSuccess ? 'Payment successful · Seating confirmed' : 'Order placed · Seating confirmed'}
             </p>
           </Card>

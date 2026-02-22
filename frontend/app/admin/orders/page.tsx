@@ -62,7 +62,7 @@ export default function AdminOrdersPage() {
     return (
       <div className="mx-auto max-w-5xl">
         <header className="mb-10">
-          <h1 className="text-2xl font-semibold tracking-tight text-venue-primary sm:text-3xl">
+          <h1 className="text-2xl font-semibold tracking-tight text-venue-foreground sm:text-3xl">
             Orders
           </h1>
           <p className="mt-1 text-sm text-venue-muted">Loading…</p>
@@ -76,7 +76,7 @@ export default function AdminOrdersPage() {
     return (
       <div className="mx-auto max-w-5xl">
         <header className="mb-10">
-          <h1 className="text-2xl font-semibold tracking-tight text-venue-primary sm:text-3xl">
+          <h1 className="text-2xl font-semibold tracking-tight text-venue-foreground sm:text-3xl">
             Orders
           </h1>
         </header>
@@ -97,7 +97,7 @@ export default function AdminOrdersPage() {
   return (
     <div className="mx-auto max-w-5xl">
       <header className="mb-10">
-        <h1 className="text-2xl font-semibold tracking-tight text-venue-primary sm:text-3xl">
+        <h1 className="text-2xl font-semibold tracking-tight text-venue-foreground sm:text-3xl">
           Orders
         </h1>
         <p className="mt-1 text-sm text-venue-muted">Placed orders from guests</p>
@@ -128,7 +128,7 @@ export default function AdminOrdersPage() {
         <button
           type="button"
           onClick={() => setShowOnSite(!showOnSite)}
-          className="text-lg font-semibold text-venue-primary hover:underline"
+          className="text-lg font-semibold text-venue-foreground hover:underline"
         >
           {showOnSite ? '−' : '+'} Create on-site order (QR payment)
         </button>
@@ -136,7 +136,7 @@ export default function AdminOrdersPage() {
           <div className="mt-6 space-y-4">
             <div className="flex flex-wrap gap-4">
               <div>
-                <label className="mb-1 block text-sm font-medium text-venue-primary">Table number</label>
+                <label className="mb-1 block text-sm font-medium text-venue-foreground">Table number</label>
                 <input
                   type="number"
                   min={1}
@@ -147,7 +147,7 @@ export default function AdminOrdersPage() {
                 />
               </div>
               <div>
-                <label className="mb-1 block text-sm font-medium text-venue-primary">Zone (optional)</label>
+                <label className="mb-1 block text-sm font-medium text-venue-foreground">Zone (optional)</label>
                 <input
                   type="text"
                   value={onSiteZone}
@@ -157,7 +157,7 @@ export default function AdminOrdersPage() {
                 />
               </div>
               <div>
-                <label className="mb-1 block text-sm font-medium text-venue-primary">Guest count</label>
+                <label className="mb-1 block text-sm font-medium text-venue-foreground">Guest count</label>
                 <input
                   type="number"
                   min={1}
@@ -169,7 +169,7 @@ export default function AdminOrdersPage() {
               </div>
             </div>
             <div>
-              <label className="mb-1 block text-sm font-medium text-venue-primary">Add items</label>
+              <label className="mb-1 block text-sm font-medium text-venue-foreground">Add items</label>
               <div className="flex flex-wrap gap-2">
                 <select
                   id="onsite-item"
@@ -219,8 +219,8 @@ export default function AdminOrdersPage() {
             </div>
             {onSiteQrUrl && (
               <div className="rounded-lg border border-venue-border bg-venue-surface p-4">
-                <p className="font-medium text-venue-primary">QR payment link created</p>
-                <a href={onSiteQrUrl} target="_blank" rel="noopener noreferrer" className="mt-2 block break-all text-sm text-venue-primary hover:underline">
+                <p className="font-medium text-venue-foreground">QR payment link created</p>
+                <a href={onSiteQrUrl} target="_blank" rel="noopener noreferrer" className="mt-2 block break-all text-sm text-venue-foreground hover:underline">
                   {onSiteQrUrl}
                 </a>
                 <p className="mt-2 text-xs text-venue-muted">Guest scans QR or opens link → pays → seating + rewards</p>
@@ -275,7 +275,7 @@ export default function AdminOrdersPage() {
               <Card key={order.id} className="p-6 transition-shadow hover:shadow-card-hover">
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div>
-                    <p className="font-semibold text-venue-primary">
+                    <p className="font-semibold text-venue-foreground">
                       Order {order.id.slice(0, 8)} · Table {order.tableNumber ?? '—'}
                     </p>
                     <p className="mt-0.5 text-sm text-venue-muted">
@@ -300,7 +300,7 @@ export default function AdminOrdersPage() {
                     </li>
                   ))}
                 </ul>
-                <p className="mt-4 font-semibold text-venue-primary">
+                <p className="mt-4 font-semibold text-venue-foreground">
                   Total: ${(order.total ?? total).toFixed(2)}
                 </p>
               </Card>

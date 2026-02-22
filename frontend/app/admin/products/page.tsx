@@ -222,7 +222,7 @@ export default function AdminProductsPage() {
     return (
       <div className="mx-auto max-w-5xl">
         <header className="mb-10">
-          <h1 className="text-2xl font-semibold tracking-tight text-venue-primary sm:text-3xl">
+          <h1 className="text-2xl font-semibold tracking-tight text-venue-foreground sm:text-3xl">
             Products
           </h1>
           <p className="mt-1 text-sm text-venue-muted">Loading…</p>
@@ -235,14 +235,14 @@ export default function AdminProductsPage() {
   return (
     <div className="mx-auto max-w-5xl">
       <header className="mb-10">
-        <h1 className="text-2xl font-semibold tracking-tight text-venue-primary sm:text-3xl">
+        <h1 className="text-2xl font-semibold tracking-tight text-venue-foreground sm:text-3xl">
           Products
         </h1>
         <p className="mt-1 text-sm text-venue-muted">
           Manage menu categories and items
         </p>
         <div className="mt-4">
-          <label htmlFor="restaurant-select" className="mb-1 block text-sm font-medium text-venue-primary">
+          <label htmlFor="restaurant-select" className="mb-1 block text-sm font-medium text-venue-foreground">
             Restaurant
           </label>
           <select
@@ -270,7 +270,7 @@ export default function AdminProductsPage() {
       {/* Categories */}
       <section className="mb-10">
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-venue-primary">Categories</h2>
+          <h2 className="text-lg font-semibold text-venue-foreground">Categories</h2>
           <button
             disabled={!selectedRestaurantId}
             type="button"
@@ -335,7 +335,7 @@ export default function AdminProductsPage() {
               >
                 {editingCategoryId === c.id ? null : (
                   <>
-                    <span className="font-medium text-venue-primary">{c.name}</span>
+                    <span className="font-medium text-venue-foreground">{c.name}</span>
                     <span className="text-sm text-venue-muted">({c.count})</span>
                     <button
                       type="button"
@@ -343,7 +343,7 @@ export default function AdminProductsPage() {
                         setEditingCategoryId(c.id)
                         setEditCategoryName(c.name)
                       }}
-                      className="text-sm text-venue-primary hover:underline"
+                      className="text-sm text-venue-foreground hover:underline"
                     >
                       Edit
                     </button>
@@ -359,7 +359,7 @@ export default function AdminProductsPage() {
       <section>
         <div className="mb-4 flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-2">
-            <h2 className="text-lg font-semibold text-venue-primary">Products</h2>
+            <h2 className="text-lg font-semibold text-venue-foreground">Products</h2>
             <select
               value={filterCategory}
               onChange={(e) => setFilterCategory(e.target.value)}
@@ -393,7 +393,7 @@ export default function AdminProductsPage() {
 
         {(showItemForm || editingItem) && (
           <Card className="mb-6 p-6">
-            <h3 className="mb-4 font-semibold text-venue-primary">
+            <h3 className="mb-4 font-semibold text-venue-foreground">
               {editingItem ? 'Edit product' : 'New product'}
             </h3>
             <form
@@ -401,7 +401,7 @@ export default function AdminProductsPage() {
               className="space-y-4"
             >
               <div>
-                <label className="mb-1 block text-sm font-medium text-venue-primary">Name</label>
+                <label className="mb-1 block text-sm font-medium text-venue-foreground">Name</label>
                 <input
                   type="text"
                   value={itemForm.name}
@@ -413,7 +413,7 @@ export default function AdminProductsPage() {
                 />
               </div>
               <div>
-                <label className="mb-1 block text-sm font-medium text-venue-primary">Price</label>
+                <label className="mb-1 block text-sm font-medium text-venue-foreground">Price</label>
                 <input
                   type="number"
                   step="0.01"
@@ -427,7 +427,7 @@ export default function AdminProductsPage() {
                 />
               </div>
               <div>
-                <label className="mb-1 block text-sm font-medium text-venue-primary">Category</label>
+                <label className="mb-1 block text-sm font-medium text-venue-foreground">Category</label>
                 <select
                   value={itemForm.categoryId}
                   onChange={(e) => setItemForm((f) => ({ ...f, categoryId: e.target.value }))}
@@ -442,7 +442,7 @@ export default function AdminProductsPage() {
                 </select>
               </div>
               <div>
-                <label className="mb-1 block text-sm font-medium text-venue-primary">Description (optional)</label>
+                <label className="mb-1 block text-sm font-medium text-venue-foreground">Description (optional)</label>
                 <input
                   type="text"
                   value={itemForm.description}
@@ -460,7 +460,7 @@ export default function AdminProductsPage() {
                   onChange={(e) => setItemForm((f) => ({ ...f, isActive: e.target.checked }))}
                   disabled={submitting}
                 />
-                <label htmlFor="isActive" className="text-sm text-venue-primary">
+                <label htmlFor="isActive" className="text-sm text-venue-foreground">
                   Active (visible to guests)
                 </label>
               </div>
@@ -493,11 +493,11 @@ export default function AdminProductsPage() {
             {filteredItems.map((item) => (
               <Card
                 key={item.id}
-                className={`flex flex-wrap items-center justify-between gap-4 p-5 ${!item.isActive ? 'opacity-70' : ''}`}
+                className={`flex flex-wrap items-center justify-between gap-4 p-5 transition-shadow hover:shadow-md ${!item.isActive ? 'opacity-60 bg-gray-50/50' : ''}`}
               >
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2">
-                    <h3 className={`font-semibold ${item.isActive ? 'text-venue-primary' : 'text-venue-muted'}`}>
+                    <h3 className={`font-semibold ${item.isActive ? 'text-venue-foreground' : 'text-gray-500'}`}>
                       {item.name}
                     </h3>
                     <Badge variant={item.isActive ? 'available' : 'disabled'}>
@@ -507,7 +507,7 @@ export default function AdminProductsPage() {
                   {item.description && (
                     <p className="mt-1 text-sm text-venue-muted">{item.description}</p>
                   )}
-                  <p className="mt-1 text-sm font-medium text-venue-primary">
+                  <p className="mt-1 text-sm font-medium text-venue-foreground">
                     ${Number(item.price).toFixed(2)} · {item.category?.name ?? '—'}
                   </p>
                 </div>

@@ -43,7 +43,7 @@ export default function OrderPathPage() {
         <div className="space-y-4">
           {ORDER_PATHS.map((p) => (
             <Card key={p.id} className="p-6 transition-shadow hover:shadow-card-hover">
-              <h3 className="font-semibold text-venue-primary">{p.title}</h3>
+              <h3 className="font-semibold text-venue-foreground">{p.title}</h3>
               <p className="mt-2 text-sm text-venue-muted">{p.description}</p>
               <button
                 type="button"
