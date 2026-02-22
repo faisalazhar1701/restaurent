@@ -32,23 +32,23 @@ export function AdminShell({ children }: { children: ReactNode }) {
 
   if (!ready || !getAdminToken()) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-slate-50">
-        <p className="text-sm text-slate-500">Loading…</p>
+      <div className="flex min-h-screen items-center justify-center bg-[#F9FAFB]">
+        <p className="text-sm text-venue-muted">Loading…</p>
       </div>
     )
   }
 
   return (
-    <div className="flex min-h-screen flex-col bg-slate-50 sm:flex-row">
-      <aside className="w-full shrink-0 border-r border-slate-200 bg-white shadow-sm sm:w-64">
-        <div className="border-b border-slate-200 px-6 py-6">
+    <div className="flex min-h-screen flex-col bg-[#F9FAFB] sm:flex-row">
+      <aside className="w-full shrink-0 border-r border-[#E5E7EB] bg-white sm:w-64">
+        <div className="border-b border-[#E5E7EB] px-6 py-6">
           <Link
             href="/admin"
-            className="text-lg font-semibold tracking-tight text-slate-900"
+            className="text-lg font-semibold text-venue-primary"
           >
             Venue Seat
           </Link>
-          <p className="mt-1 text-xs text-slate-500">Admin</p>
+          <p className="mt-1 text-xs text-venue-muted">Admin</p>
         </div>
         <AdminNav />
       </aside>

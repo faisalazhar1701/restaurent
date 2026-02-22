@@ -12,9 +12,9 @@ export function Button({
 } & ButtonHTMLAttributes<HTMLButtonElement>) {
   const base = 'h-12 rounded-xl px-6 text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-all'
   const variants = {
-    primary: 'bg-venue-primary text-white hover:bg-slate-800',
-    secondary: 'border border-slate-200 bg-white text-slate-700 hover:bg-slate-50',
-    accent: 'bg-venue-accent text-white hover:bg-blue-700',
+    primary: 'bg-venue-primary text-white hover:opacity-90',
+    secondary: 'border border-venue-border bg-white text-venue-primary hover:bg-[#F9FAFB]',
+    accent: 'bg-venue-accent text-white hover:opacity-90',
   }
   return (
     <button className={`${base} ${variants[variant]} ${className}`} {...props}>

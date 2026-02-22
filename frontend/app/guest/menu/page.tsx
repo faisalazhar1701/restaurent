@@ -3,6 +3,7 @@
 import { useState, useEffect, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
+import { Plus, ShoppingCart } from 'lucide-react'
 import { PageContainer } from '@/components/guest/PageContainer'
 import { BottomBar } from '@/components/guest/BottomBar'
 import { StepIndicator } from '@/components/guest/StepIndicator'
@@ -123,18 +124,21 @@ function MenuPageInner() {
       <PageContainer title="Menu" subtitle={VENUE_NAME}>
         <StepIndicator current="menu" />
         {emptyCartMessage && (
-          <div className="mb-6 rounded-2xl border border-slate-200 bg-slate-50 px-5 py-4">
-            <p className="text-sm text-slate-600">Your cart is empty. Add items below to continue.</p>
-          </div>
+          <Card className="p-4">
+            <p className="text-sm text-venue-muted">Your cart is empty. Add items below to continue.</p>
+          </Card>
         )}
         <Link
           href="/guest/cart"
-          className="mb-8 flex min-h-[56px] items-center justify-between rounded-2xl border border-slate-200 bg-white px-6 py-4 shadow-sm transition-all hover:shadow-md"
+          className="flex min-h-[56px] items-center justify-between rounded-2xl border border-[#E5E7EB] bg-white p-6 shadow-sm transition-all hover:shadow-lg"
         >
-          <span className="font-medium text-slate-900">Cart</span>
-          <span className="text-lg font-bold text-slate-900">{cartCount} {cartCount === 1 ? 'item' : 'items'}</span>
+          <span className="flex items-center gap-2 font-medium text-venue-primary">
+            <ShoppingCart className="h-5 w-5 text-venue-accent" />
+            Cart
+          </span>
+          <span className="text-lg font-bold text-venue-primary">{cartCount} {cartCount === 1 ? 'item' : 'items'}</span>
         </Link>
-        <div className="-mx-1 mb-8 flex gap-2 overflow-x-auto pb-2">
+        <div className="-mx-1 flex gap-2 overflow-x-auto pb-2">
           {safeCategories.map((cat) => (
             <button
               key={cat.id}
@@ -143,7 +147,7 @@ function MenuPageInner() {
               className={`h-12 shrink-0 rounded-full px-5 text-sm font-medium transition-all ${
                 activeCategory === cat.id
                   ? 'bg-venue-primary text-white shadow-md'
-                  : 'border border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:text-slate-900'
+                  : 'border border-[#E5E7EB] bg-white text-venue-muted hover:border-venue-accent/50 hover:text-venue-primary'
               }`}
             >
               {cat.name}
@@ -160,24 +164,34 @@ function MenuPageInner() {
             <EmptyState title="No items in this category" description="Select another category." />
           ) : (
             filteredItems.map((item) => (
-              <Card key={item.id} className="flex flex-row items-center justify-between gap-6 p-6 transition-all hover:shadow-md">
-                <div className="min-w-0 flex-1">
-                  <h3 className="text-base font-semibold text-slate-900">{item.name}</h3>
-                  {item.description && (
-                    <p className="mt-1 text-sm text-slate-500">{item.description}</p>
-                  )}
-                  <p className="mt-3 text-right text-xl font-bold text-slate-900">
-                    ${Number(item.price).toFixed(2)}
-                  </p>
+              <Card key={item.id} className="overflow-hidden transition-all hover:shadow-lg">
+                <div className="flex gap-6 p-6">
+                  <div className="h-24 w-24 shrink-0 overflow-hidden rounded-xl bg-[#F9FAFB]">
+                    <div className="flex h-full w-full items-center justify-center text-venue-muted">
+                      <div className="h-12 w-12 rounded-lg bg-[#E5E7EB]" />
+                    </div>
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <h3 className="text-base font-semibold text-venue-primary">{item.name}</h3>
+                    {item.description && (
+                      <p className="mt-1 text-sm text-venue-muted">{item.description}</p>
+                    )}
+                    <div className="mt-4 flex items-center justify-between gap-4">
+                      <p className="text-xl font-bold text-venue-primary">
+                        ${Number(item.price).toFixed(2)}
+                      </p>
+                      <button
+                        type="button"
+                        disabled={!!addingId || order?.status !== 'draft'}
+                        onClick={() => handleAddToCart(item)}
+                        className="btn-accent flex h-12 items-center gap-2 px-6 disabled:opacity-50"
+                      >
+                        <Plus className="h-4 w-4" />
+                        {addingId === item.id ? 'Adding…' : 'Add to cart'}
+                      </button>
+                    </div>
+                  </div>
                 </div>
-                <button
-                  type="button"
-                  disabled={!!addingId || order?.status !== 'draft'}
-                  onClick={() => handleAddToCart(item)}
-                  className="btn-primary h-12 shrink-0 px-6 disabled:opacity-50"
-                >
-                  {addingId === item.id ? 'Adding…' : 'Add'}
-                </button>
               </Card>
             ))
           )}

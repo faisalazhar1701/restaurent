@@ -2,34 +2,46 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import {
+  LayoutDashboard,
+  UtensilsCrossed,
+  Package,
+  Armchair,
+  Table2,
+  ClipboardList,
+  Gift,
+  BarChart3,
+  LogOut,
+} from 'lucide-react'
 import { clearAdminToken } from '@/lib/adminAuth'
+
+const nav = [
+  { href: '/admin', label: 'Dashboard', icon: LayoutDashboard },
+  { href: '/admin/restaurants', label: 'Restaurants', icon: UtensilsCrossed },
+  { href: '/admin/products', label: 'Products', icon: Package },
+  { href: '/admin/seating', label: 'Seating', icon: Armchair },
+  { href: '/admin/tables', label: 'Tables', icon: Table2 },
+  { href: '/admin/orders', label: 'Orders', icon: ClipboardList },
+  { href: '/admin/rewards', label: 'Rewards', icon: Gift },
+  { href: '/admin/analytics', label: 'Analytics', icon: BarChart3 },
+]
 
 export function AdminNav() {
   const pathname = usePathname()
 
-  const nav = [
-    { href: '/admin', label: 'Dashboard' },
-    { href: '/admin/restaurants', label: 'Restaurants' },
-    { href: '/admin/products', label: 'Products' },
-    { href: '/admin/seating', label: 'Seating' },
-    { href: '/admin/tables', label: 'Tables' },
-    { href: '/admin/orders', label: 'Orders' },
-    { href: '/admin/rewards', label: 'Rewards' },
-    { href: '/admin/analytics', label: 'Analytics' },
-  ]
-
   return (
     <nav className="flex flex-col gap-1 p-4">
-      {nav.map(({ href, label }) => (
+      {nav.map(({ href, label, icon: Icon }) => (
         <Link
           key={href}
           href={href}
           className={`flex h-12 items-center gap-3 rounded-xl px-4 text-sm font-medium transition-all ${
             pathname === href
-              ? 'bg-slate-900 text-white'
-              : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+              ? 'bg-venue-primary text-white'
+              : 'text-venue-muted hover:bg-[#F9FAFB] hover:text-venue-primary'
           }`}
         >
+          <Icon className="h-5 w-5 shrink-0" />
           {label}
         </Link>
       ))}
@@ -39,8 +51,9 @@ export function AdminNav() {
           clearAdminToken()
           window.location.href = '/admin/login'
         }}
-        className="mt-4 flex h-12 items-center gap-3 rounded-xl px-4 text-left text-sm font-medium text-slate-600 transition-all hover:bg-slate-100 hover:text-slate-900"
+        className="mt-4 flex h-12 items-center gap-3 rounded-xl px-4 text-left text-sm font-medium text-venue-muted transition-all hover:bg-[#F9FAFB] hover:text-venue-primary"
       >
+        <LogOut className="h-5 w-5 shrink-0" />
         Sign out
       </button>
     </nav>

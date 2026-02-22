@@ -52,10 +52,10 @@ export default function AdminTablesPage() {
     return (
       <div className="mx-auto max-w-5xl">
         <header className="mb-10">
-          <h1 className="text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl">
+          <h1 className="text-2xl font-semibold text-venue-primary md:text-3xl">
             Tables
           </h1>
-          <p className="mt-1 text-sm text-slate-500">Loading…</p>
+          <p className="mt-1 text-sm text-venue-muted">Loading…</p>
         </header>
         <Skeleton lines={6} />
       </div>
@@ -67,10 +67,10 @@ export default function AdminTablesPage() {
   return (
     <div className="mx-auto max-w-5xl">
       <header className="mb-10">
-        <h1 className="text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl">
+        <h1 className="text-2xl font-semibold text-venue-primary md:text-3xl">
           Tables
         </h1>
-        <p className="mt-1 text-sm text-slate-500">
+        <p className="mt-1 text-sm text-venue-muted">
           Manage zones and table capacity
         </p>
       </header>
@@ -80,7 +80,7 @@ export default function AdminTablesPage() {
       )}
 
       <Card className="mb-10 p-6">
-        <h2 className="text-lg font-semibold text-slate-900">Add table</h2>
+        <h2 className="text-lg font-semibold text-venue-primary">Add table</h2>
         <form
           onSubmit={async (e) => {
             e.preventDefault()
@@ -108,7 +108,7 @@ export default function AdminTablesPage() {
           className="mt-6 flex flex-wrap items-end gap-4"
         >
           <div className="min-w-[140px]">
-            <label className="mb-1.5 block text-sm font-medium text-slate-900">
+            <label className="mb-1.5 block text-sm font-medium text-venue-primary">
               Table number
             </label>
             <input
@@ -122,7 +122,7 @@ export default function AdminTablesPage() {
             />
           </div>
           <div className="min-w-[140px]">
-            <label className="mb-1.5 block text-sm font-medium text-slate-900">
+            <label className="mb-1.5 block text-sm font-medium text-venue-primary">
               Zone (optional)
             </label>
             <input
@@ -135,7 +135,7 @@ export default function AdminTablesPage() {
             />
           </div>
           <div className="min-w-[100px]">
-            <label className="mb-1.5 block text-sm font-medium text-slate-900">
+            <label className="mb-1.5 block text-sm font-medium text-venue-primary">
               Capacity
             </label>
             <input
@@ -162,10 +162,10 @@ export default function AdminTablesPage() {
       </Card>
 
       <div className="mb-6 flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-slate-900">All tables</h2>
+        <h2 className="text-lg font-semibold text-venue-primary">All tables</h2>
         <Link
           href="/admin/seating"
-          className="text-sm font-medium text-slate-900 hover:underline"
+          className="text-sm font-medium text-venue-primary hover:underline"
         >
           View seating map →
         </Link>
@@ -179,9 +179,9 @@ export default function AdminTablesPage() {
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {safeTables.map((t) => (
-            <Card key={t.id} className="p-6 transition-all hover:shadow-md">
+            <Card key={t.id} className="p-6 transition-all hover:shadow-lg">
               <div className="flex items-center justify-between">
-                <p className="font-semibold text-slate-900">
+                <p className="font-semibold text-venue-primary">
                   {t.zone ? `${t.zone}-${t.tableNumber}` : `Table ${t.tableNumber}`}
                 </p>
                 <Badge
@@ -200,7 +200,7 @@ export default function AdminTablesPage() {
                       : 'Occupied'}
                 </Badge>
               </div>
-              <p className="mt-2 text-sm text-slate-500">
+              <p className="mt-2 text-sm text-venue-muted">
                 Capacity {t.capacity ?? 4}
               </p>
               <div className="mt-4 flex flex-wrap items-center gap-2">

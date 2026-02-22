@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import { Minus, Plus, Trash2 } from 'lucide-react'
 import { PageContainer } from '@/components/guest/PageContainer'
 import { StepIndicator } from '@/components/guest/StepIndicator'
 import { BottomBar } from '@/components/guest/BottomBar'
@@ -131,64 +132,69 @@ export default function CartPage() {
     <>
       <PageContainer title="Your cart" subtitle={VENUE_NAME}>
         <StepIndicator current="cart" />
-        <p className="mb-6 text-xs text-slate-500">Review your order before checkout.</p>
+        <p className="text-xs text-venue-muted">Review your order before checkout.</p>
         {order?.status === 'placed' ? (
-          <p className="text-sm text-slate-500">Order already placed.</p>
+          <Card className="p-6">
+            <p className="text-sm text-venue-muted">Order already placed.</p>
+          </Card>
         ) : orderItems.length === 0 ? (
           <EmptyState title="Your cart is empty" description="Add items from the menu." />
         ) : (
           <div className="space-y-4">
             {orderItems.map((item) => (
-              <Card key={item.id} className="flex flex-wrap items-center justify-between gap-4 p-6 transition-all hover:shadow-md">
-                <div className="min-w-0 flex-1">
-                  <h3 className="font-medium text-slate-900">{item.menuItemName}</h3>
-                  <p className="mt-0.5 text-sm text-slate-500">
-                    ${item.priceAtOrder.toFixed(2)} each
-                  </p>
-                </div>
-                <div className="flex items-center gap-4">
-                  <div className="flex h-12 items-center rounded-xl border border-slate-200 bg-slate-50">
+              <Card key={item.id} className="p-6 transition-all hover:shadow-lg">
+                <div className="flex flex-wrap items-center justify-between gap-4">
+                  <div className="min-w-0 flex-1">
+                    <h3 className="font-medium text-venue-primary">{item.menuItemName}</h3>
+                    <p className="mt-0.5 text-sm text-venue-muted">
+                      ${item.priceAtOrder.toFixed(2)} each
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-4">
+                    <div className="flex h-12 items-center rounded-xl border border-[#E5E7EB] bg-[#F9FAFB]">
+                      <button
+                        type="button"
+                        disabled={!!updatingId}
+                        onClick={() => handleUpdateQuantity(item, -1)}
+                        className="flex h-12 w-12 shrink-0 items-center justify-center text-venue-primary hover:bg-[#E5E7EB] disabled:opacity-50"
+                        aria-label="Decrease quantity"
+                      >
+                        <Minus className="h-4 w-4" />
+                      </button>
+                      <span className="min-w-[2.5rem] text-center text-base font-bold text-venue-primary">
+                        {item.quantity}
+                      </span>
+                      <button
+                        type="button"
+                        disabled={!!updatingId}
+                        onClick={() => handleUpdateQuantity(item, 1)}
+                        className="flex h-12 w-12 shrink-0 items-center justify-center text-venue-primary hover:bg-[#E5E7EB] disabled:opacity-50"
+                        aria-label="Increase quantity"
+                      >
+                        <Plus className="h-4 w-4" />
+                      </button>
+                    </div>
+                    <p className="w-24 shrink-0 text-right text-lg font-bold text-venue-primary">
+                      ${(item.quantity * item.priceAtOrder).toFixed(2)}
+                    </p>
                     <button
                       type="button"
                       disabled={!!updatingId}
-                      onClick={() => handleUpdateQuantity(item, -1)}
-                      className="flex h-12 w-12 shrink-0 items-center justify-center text-lg font-medium text-slate-900 hover:bg-slate-100 disabled:opacity-50"
-                      aria-label="Decrease quantity"
+                      onClick={() => handleRemove(item)}
+                      className="btn-secondary flex h-12 items-center gap-2 text-venue-danger hover:bg-red-50 hover:border-red-200 disabled:opacity-50"
                     >
-                      −
-                    </button>
-                    <span className="min-w-[2.5rem] text-center text-base font-bold text-slate-900">
-                      {item.quantity}
-                    </span>
-                    <button
-                      type="button"
-                      disabled={!!updatingId}
-                      onClick={() => handleUpdateQuantity(item, 1)}
-                      className="flex h-12 w-12 shrink-0 items-center justify-center text-lg font-medium text-slate-900 hover:bg-slate-100 disabled:opacity-50"
-                      aria-label="Increase quantity"
-                    >
-                      +
+                      <Trash2 className="h-4 w-4" />
+                      Remove
                     </button>
                   </div>
-                  <p className="w-24 shrink-0 text-right text-lg font-bold text-slate-900">
-                    ${(item.quantity * item.priceAtOrder).toFixed(2)}
-                  </p>
-                  <button
-                    type="button"
-                    disabled={!!updatingId}
-                    onClick={() => handleRemove(item)}
-                    className="btn-secondary h-12 shrink-0 disabled:opacity-50"
-                  >
-                    Remove
-                  </button>
                 </div>
               </Card>
             ))}
-            <Card className="p-6">
-              <p className="text-right text-2xl font-bold text-slate-900">
+            <div className="sticky bottom-0 rounded-2xl border border-[#E5E7EB] bg-white p-6 shadow-lg">
+              <p className="text-right text-2xl font-bold text-venue-primary">
                 Total: ${total.toFixed(2)}
               </p>
-            </Card>
+            </div>
           </div>
         )}
       </PageContainer>

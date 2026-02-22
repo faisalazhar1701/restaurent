@@ -2,8 +2,10 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import { Gift, CheckCircle } from 'lucide-react'
 import { PageContainer } from '@/components/guest/PageContainer'
 import { BottomBar } from '@/components/guest/BottomBar'
+import { StepIndicator } from '@/components/guest/StepIndicator'
 import { Card } from '@/components/ui/Card'
 import { Skeleton } from '@/components/ui/Skeleton'
 import { EmptyState } from '@/components/ui/EmptyState'
@@ -61,27 +63,33 @@ export default function RewardsPage() {
   return (
     <>
       <PageContainer title="Rewards" subtitle="Offers from restaurants">
+        <StepIndicator current="rewards" />
         {rewards.length === 0 ? (
-          <EmptyState title="No rewards available right now" description="Check back later for offers." />
+          <EmptyState
+            title="No rewards available right now"
+            description="Check back later for offers."
+            icon={Gift}
+          />
         ) : (
           <div className="space-y-4">
             {rewards.map((r) => (
-              <Card key={r.id} className="p-6 transition-all hover:shadow-md">
-                <div className="flex gap-5">
+              <Card key={r.id} className="p-6 md:p-8 transition-all hover:shadow-lg">
+                <div className="flex gap-6">
                   <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-venue-accent/10 text-venue-accent">
-                    <span className="text-2xl" aria-hidden>🎁</span>
+                    <Gift className="h-7 w-7" />
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className="text-lg font-semibold text-slate-900">{r.title}</p>
+                    <p className="text-lg font-semibold text-venue-primary">{r.title}</p>
                     {r.description && (
-                      <p className="mt-1 text-sm text-slate-500">{r.description}</p>
+                      <p className="mt-1 text-sm text-venue-muted">{r.description}</p>
                     )}
                     {r.restaurant && (
-                      <p className="mt-1 text-xs text-slate-500">From {r.restaurant.name}</p>
+                      <p className="mt-1 text-xs text-venue-muted">From {r.restaurant.name}</p>
                     )}
-                    <span className="mt-4 inline-block rounded-full bg-emerald-100 px-4 py-2 text-sm font-medium text-emerald-700">
-                      Redeem at counter
-                    </span>
+                    <div className="mt-4 flex items-center gap-2 rounded-full bg-venue-success/10 px-4 py-2 w-fit">
+                      <CheckCircle className="h-4 w-4 text-venue-success" />
+                      <span className="text-sm font-medium text-venue-success">Redeem at counter</span>
+                    </div>
                   </div>
                 </div>
               </Card>
@@ -89,8 +97,9 @@ export default function RewardsPage() {
           </div>
         )}
       </PageContainer>
-      <div className="sticky bottom-0 z-10 mt-auto flex border-t border-slate-200 bg-white p-4 pb-[max(1rem,env(safe-area-inset-bottom))] shadow-[0_-4px_20px_rgba(0,0,0,0.08)]">
-        <button type="button" onClick={handleDone} className="btn-primary h-12 flex-1">
+      <div className="sticky bottom-0 z-10 mt-auto flex border-t border-[#E5E7EB] bg-white p-4 pb-[max(1rem,env(safe-area-inset-bottom))] shadow-[0_-4px_24px_rgba(0,0,0,0.06)]">
+        <button type="button" onClick={handleDone} className="btn-primary h-12 flex-1 flex items-center justify-center gap-2">
+          <CheckCircle className="h-4 w-4" />
           Done
         </button>
       </div>

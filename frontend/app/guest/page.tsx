@@ -57,7 +57,7 @@ function GuestEntryPageInner() {
   }
 
   return (
-    <main className="flex min-h-screen flex-1 flex-col bg-slate-900">
+    <main className="flex min-h-screen flex-1 flex-col bg-venue-primary">
       <div className="flex flex-1 flex-col items-center justify-center px-6 py-16">
         <div className="mx-auto max-w-sm text-center">
           {tableScanLabel && (
@@ -84,7 +84,7 @@ function GuestEntryPageInner() {
           type="button"
           onClick={handleStartOrder}
           disabled={loading || !apiConfigured}
-          className="mt-12 w-full max-w-xs rounded-xl bg-white px-6 py-4 text-base font-semibold text-slate-900 transition-opacity hover:opacity-90 disabled:opacity-50"
+          className="mt-12 w-full max-w-xs rounded-xl bg-white px-6 py-4 text-base font-semibold text-venue-primary transition-opacity hover:opacity-90 disabled:opacity-50"
         >
           {loading ? 'Starting…' : 'Start order'}
         </button>
@@ -100,7 +100,7 @@ function GuestEntryPageInner() {
 function GuestEntryFallback() {
   const apiConfigured = getApiBaseUrlOrNull() != null
   return (
-    <main className="flex min-h-screen flex-1 flex-col bg-slate-900">
+    <main className="flex min-h-screen flex-1 flex-col bg-venue-primary">
       <div className="flex flex-1 flex-col items-center justify-center px-6 py-16">
         <div className="mx-auto max-w-sm text-center">
           <p className="text-xs font-medium uppercase tracking-wider text-white/70 sm:text-sm">
@@ -121,7 +121,7 @@ function GuestEntryFallback() {
         <button
           type="button"
           disabled
-          className="mt-12 w-full max-w-xs rounded-xl bg-white px-6 py-4 text-base font-semibold text-slate-900 transition-opacity disabled:opacity-50"
+          className="mt-12 w-full max-w-xs rounded-xl bg-white px-6 py-4 text-base font-semibold text-venue-primary transition-opacity disabled:opacity-50"
         >
           Start order
         </button>

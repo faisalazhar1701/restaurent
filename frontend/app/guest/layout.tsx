@@ -7,7 +7,7 @@ export default function GuestLayout({
   children: React.ReactNode
 }) {
   return (
-    <div className="flex min-h-screen flex-col bg-slate-50">
+    <div className="flex min-h-screen flex-col bg-[#F9FAFB]">
       {children}
     </div>
   )

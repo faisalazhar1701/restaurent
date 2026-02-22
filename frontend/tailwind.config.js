@@ -8,13 +8,11 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        // Premium B2B SaaS palette — slate-900 primary, blue accent
-        "venue-primary": "#0F172A",
-        "venue-foreground": "#0F172A",
-        "venue-accent": "#2563EB",
-        "venue-muted": "#64748B",
-        "venue-surface": "#F8FAFC",
-        "venue-border": "#E2E8F0",
+        "venue-primary": "#0B1220",
+        "venue-accent": "#3B82F6",
+        "venue-muted": "#6B7280",
+        "venue-surface": "#F9FAFB",
+        "venue-border": "#E5E7EB",
         "venue-success": "#22C55E",
         "venue-warning": "#F59E0B",
         "venue-danger": "#EF4444",

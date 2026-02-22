@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import { Users } from 'lucide-react'
 import { PageContainer } from '@/components/guest/PageContainer'
 import { BottomBar } from '@/components/guest/BottomBar'
 import { Card } from '@/components/ui/Card'
@@ -23,17 +24,20 @@ export default function DineInPage() {
   return (
     <>
       <PageContainer title="Party size" subtitle={VENUE_NAME}>
-        <p className="mb-6 text-sm text-slate-500">How many people are dining? We&apos;ll find a suitable table.</p>
+        <p className="text-xs text-venue-muted">How many people are dining? We&apos;ll find a suitable table.</p>
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
           {GUEST_COUNTS.map((n) => (
-            <Card key={n} className="p-6 text-center transition-all hover:shadow-md">
+            <Card key={n} className="p-6 md:p-8 transition-all hover:shadow-lg">
               <button
                 type="button"
                 onClick={() => handleSelect(n)}
-                className="flex h-full min-h-[80px] w-full flex-col items-center justify-center"
+                className="flex h-full min-h-[100px] w-full flex-col items-center justify-center gap-2"
               >
-                <span className="text-xl font-semibold text-slate-900">{n}</span>
-                <p className="mt-1 text-sm text-slate-500">
+                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-venue-accent/10 text-venue-accent">
+                  <Users className="h-6 w-6" />
+                </div>
+                <span className="text-2xl font-bold text-venue-primary">{n}</span>
+                <p className="text-sm text-venue-muted">
                   {n === 1 ? 'guest' : 'guests'}
                 </p>
               </button>
